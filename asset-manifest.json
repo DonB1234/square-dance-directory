@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/square-dance-directory/static/css/main.876ef63b.css",
+    "main.js": "/square-dance-directory/static/js/main.fe3c3ba6.js",
+    "index.html": "/square-dance-directory/index.html",
+    "main.876ef63b.css.map": "/square-dance-directory/static/css/main.876ef63b.css.map",
+    "main.fe3c3ba6.js.map": "/square-dance-directory/static/js/main.fe3c3ba6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.876ef63b.css",
+    "static/js/main.fe3c3ba6.js"
+  ]
+}
