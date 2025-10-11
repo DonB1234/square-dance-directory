@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/square-dance-directory/static/css/main.1ea35543.css",
-    "main.js": "/square-dance-directory/static/js/main.bd6b0ff5.js",
+    "main.js": "/square-dance-directory/static/js/main.1544b9c2.js",
     "index.html": "/square-dance-directory/index.html",
     "main.1ea35543.css.map": "/square-dance-directory/static/css/main.1ea35543.css.map",
-    "main.bd6b0ff5.js.map": "/square-dance-directory/static/js/main.bd6b0ff5.js.map"
+    "main.1544b9c2.js.map": "/square-dance-directory/static/js/main.1544b9c2.js.map"
   },
   "entrypoints": [
     "static/css/main.1ea35543.css",
-    "static/js/main.bd6b0ff5.js"
+    "static/js/main.1544b9c2.js"
   ]
 }
