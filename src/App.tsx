@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import "./App.css";
 
-
 interface Club {
   id: string;
   name: string;
@@ -493,16 +492,16 @@ const clubsRaw: Club[] = [
     name: "Hervey Bay Square Dance Club",
     city: "Hervey Bay",
     state: "QLD",
-    location: "459 Boat Harbour Dr, Torquay",
+    location: "",
     night: "",
     caller_cuer: "",
     time: "",
     level: "",
-    telephone: "0404 655271",
+    telephone: "",
     email: "",
     facebook: "",
-    website: "https://squaredancingherveybay.com.au/",
-    logo: "/logos/Hervey%20Bay%20Square%20Dance%20Club.png",
+    website: "https://www.squaredancingherveybay.com.au/",
+    logo: "",
   },
   {
     id: "QLD-007",
@@ -780,7 +779,22 @@ const clubsRaw: Club[] = [
     website: "",
     logo: "",
   },
-  
+  {
+    id: "NSW-003",
+    name: "Kerr-Ly-Qs",
+    city: "Curtin (Canberra region)",
+    state: "NSW",
+    location: "St James Church Hall, Curtin",
+    night: "Tuesday",
+    caller_cuer: "",
+    time: "7:30pm",
+    level: "Beginner / Mainstream",
+    telephone: "02 6281 2007",
+    email: "info@kerrlyqs.com.au",
+    facebook: "https://www.facebook.com/KerrLyQs",
+    website: "http://www.kerrlyqs.com.au",
+    logo: "",
+  },
   {
     id: "NSW-004",
     name: "Central Coast Ocean Waves",

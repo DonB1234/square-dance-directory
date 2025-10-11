@@ -1,3 +1,10 @@
+Absolutely! I’ll combine everything you’ve requested so far into a full App.css. This will include:
+•	Fixed card size (based on Adelaide Dancers in SA)
+•	Text wrapping for long lines (like Cloverwest WA)
+•	Gentle inner border glow based on state color
+•	Responsive layout for multiple cards
+•	Basic hover effect for interactivity
+Here’s the complete CSS:
 /* App.css */
 
 /* Global reset & font */
@@ -19,19 +26,16 @@ body {
 
 .state-btn {
   cursor: pointer;
-  border: 2px solid #007bff;
-  padding: 6px 12px;
+  border-width: 2px;
+  border-style: solid;
+  padding: 6px 8px;
   font-weight: bold;
   border-radius: 4px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-  background-color: #fff;
-  color: #007bff;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .state-btn.active {
-  background-color: #007bff;
-  color: #fff;
   transform: scale(1.05);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
 }
@@ -40,11 +44,10 @@ body {
 .search-input {
   width: 100%;
   max-width: 400px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  margin-bottom: 12px;
 }
 
 /* Clubs Container */
@@ -57,20 +60,23 @@ body {
 
 /* Club Card */
 .club-card {
-  flex: 1 1 300px;
-  max-width: 350px;
+  flex: 1 1 300px; /* minimum 300px width, grows equally */
+  max-width: 350px; /* optional: restrict maximum width */
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 12px;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
+
+  /* Inner gentle border glow */
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
 }
 
+/* Hover effect: subtle lift and shadow */
 .club-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
@@ -87,39 +93,36 @@ body {
 /* Club Info Section */
 .club-info {
   flex: 1;
-  min-width: 0;
+  min-width: 0; /* important for text wrapping in flex containers */
 }
 
 .club-name {
-  margin: 0 0 6px 0;
-  font-size: 1.25rem;
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
   font-weight: bold;
   word-wrap: break-word;
 }
 
 .club-sub {
-  font-size: 0.95rem;
-  color: #555;
+  font-size: 0.9rem;
+  color: #666;
   margin-bottom: 8px;
   word-wrap: break-word;
 }
 
-/* Club Details */
-.club-info p {
-  margin: 4px 0;
-  font-size: 0.9rem;
-  color: #333;
-  word-wrap: break-word;
+/* Details Button */
+.details-btn {
+  cursor: pointer;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-.club-info a {
-  color: #007bff;
-  text-decoration: none;
-  word-wrap: break-word;
-}
-
-.club-info a:hover {
-  text-decoration: underline;
+.details-btn:hover {
+  transform: scale(1.05);
 }
 
 /* Club Right Section: Logo + State Badge */
@@ -131,37 +134,48 @@ body {
 }
 
 .state-badge {
-  padding: 4px 10px;
+  padding: 4px 8px;
   font-weight: bold;
   color: #fff;
   border-radius: 4px;
   margin-bottom: 8px;
   text-align: center;
   min-width: 50px;
+  word-wrap: break-word;
 }
 
-/* Club Logo */
 .club-logo {
   width: 60px;
   height: 60px;
   object-fit: contain;
   border-radius: 4px;
   flex-shrink: 0;
-  border: 1px solid #ddd;
-  background-color: #fafafa;
+}
+
+/* Club Details: Collapsible Section */
+.club-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.club-details.expanded {
+  max-height: 500px; /* enough to show all content */
+  opacity: 1;
+}
+
+/* Individual Paragraph Wrapping */
+.club-details p {
+  margin: 4px 0;
+  word-wrap: break-word; /* ensures text wraps */
+  white-space: pre-wrap; /* preserves whitespace and wraps long URLs */
 }
 
 /* No Results */
 .no-results {
   font-style: italic;
   color: #888;
-  margin-top: 12px;
-  font-size: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .clubs-container {
-    justify-content: center;
-  }
 }
