@@ -1149,52 +1149,43 @@ const clubsRaw: Club[] = [
     logo: "",
   },
 ];
-
 const App: React.FC = () => {
-  // Programmatic dedupe by id, keeping the first occurrence:
   const clubs = useMemo(() => {
     const seen = new Set<string>();
-    const deduped: Club[] = [];
-    for (const c of clubsRaw) {
-      if (!seen.has(c.id)) {
+    return clubsRaw
+      .filter((c) => {
+        if (seen.has(c.id)) return false;
         seen.add(c.id);
-        // ensure logos use your CDN-like future path
-        deduped.push({
-          ...c,
-          logo: `/assets/logos/${c.id}.png`, // placeholder path for your CDN
-        });
-      }
-    }
-    return deduped;
+        return true;
+      })
+      .map((c) => ({
+        ...c,
+        logo: generateLogoPath(c.name),
+      }));
   }, []);
 
-  // app state
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // When user types a search, we clear the selectedState to let search take precedence
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     if (value.trim() !== "") {
       setSelectedState(null);
-      setExpandedId(null); // collapse any expanded when search begins (optional)
+      setExpandedId(null);
     }
   };
 
-  // When a state button is clicked we clear the search (state filter takes effect)
   const handleStateClick = (state: string) => {
     setSearchTerm("");
     setSelectedState((prev) => (prev === state ? null : state));
     setExpandedId(null);
   };
 
-  // Toggle single-expanded behavior
   const toggleDetails = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
-  // Filter logic: if search has term, ignore state filter and match name/location/night
   const filteredClubs = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (term.length > 0) {
@@ -1205,10 +1196,7 @@ const App: React.FC = () => {
           c.night.toLowerCase().includes(term)
       );
     } else if (selectedState) {
-      return clubs.filter((c) => {
-        // NOTE: some items had "NSW/ACT" in state; match if includes selectedState
-        return c.state === selectedState || c.state.includes(selectedState);
-      });
+      return clubs.filter((c) => c.state === selectedState || c.state.includes(selectedState));
     } else {
       return clubs;
     }
@@ -1217,14 +1205,11 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <h1 style={{ marginBottom: 6 }}>Australian Square Dance Clubs</h1>
-      <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: 12 }}>
-        © Don Barba 2025
-      </div>
+      <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: 12 }}>© Don Barba 2025</div>
 
       {/* State Filter Buttons */}
       <div className="state-buttons" role="toolbar" aria-label="Filter by state">
         {Object.keys(stateColors).map((stateKey) => {
-          // use NSW button width as standard — we set CSS but can set inline width for consistent sizing
           const bg = stateColors[stateKey] || "#eee";
           const border = stateBorderColors[stateKey] || "#000";
           const isActive = selectedState === stateKey;
@@ -1234,12 +1219,7 @@ const App: React.FC = () => {
               key={stateKey}
               onClick={() => handleStateClick(stateKey)}
               className={`state-btn ${isActive ? "active" : ""}`}
-              style={{
-                backgroundColor: bg,
-                borderColor: border,
-                color: "#fff",
-                width: 100, // uniform size; adjust if needed
-              }}
+              style={{ backgroundColor: bg, borderColor: border, color: "#fff", width: 100 }}
             >
               {stateKey}
             </button>
@@ -1269,13 +1249,7 @@ const App: React.FC = () => {
             const bgBadge = stateColors[club.state] || "#999";
 
             return (
-              <div
-                key={club.id}
-                className="club-card"
-                style={{
-                  border: `3px solid ${borderColor}`,
-                }}
-              >
+              <div key={club.id} className="club-card" style={{ border: `3px solid ${borderColor}` }}>
                 <div className="club-header">
                   <div className="club-info">
                     <h2 className="club-name">{club.name}</h2>
@@ -1287,42 +1261,32 @@ const App: React.FC = () => {
                         className="details-btn"
                         onClick={() => toggleDetails(club.id)}
                         aria-expanded={expandedId === club.id}
-                        style={{
-                          backgroundColor: bgBadge,
-                        }}
+                        style={{ backgroundColor: bgBadge }}
                       >
                         {expandedId === club.id ? "Hide Details" : "View Details"}
                       </button>
                     </div>
                   </div>
 
-                  {/* Right-side logo & state badge */}
                   <div className="club-right">
                     <div
                       className="state-badge"
-                      style={{
-                        backgroundColor: bgBadge,
-                        border: `2px solid ${borderColor}`,
-                      }}
+                      style={{ backgroundColor: bgBadge, border: `2px solid ${borderColor}` }}
                       aria-hidden
                     >
                       {club.state}
                     </div>
-
                     <img
                       src={club.logo}
                       alt={`${club.name} logo`}
                       className="club-logo"
                       onError={(e) => {
-                        // If asset not found yet, fallback to a lightweight placeholder
-                        (e.currentTarget as HTMLImageElement).src =
-                          "/assets/logos/placeholder.png";
+                        (e.currentTarget as HTMLImageElement).src = "/assets/logos/placeholder.png";
                       }}
                     />
                   </div>
                 </div>
 
-                {/* Collapsible details */}
                 <div className={`club-details ${expandedId === club.id ? "expanded" : ""}`}>
                   <p>
                     <strong>Location:</strong> {club.location || "N/A"}
@@ -1338,21 +1302,12 @@ const App: React.FC = () => {
                   </p>
                   <p>
                     <strong>Telephone:</strong>{" "}
-                    {club.telephone ? (
-                      <a href={`tel:${club.telephone.replace(/\s+/g, "")}`}>{club.telephone}</a>
-                    ) : (
-                      "N/A"
-                    )}
+                    {club.telephone ? <a href={`tel:${club.telephone.replace(/\s+/g, "")}`}>{club.telephone}</a> : "N/A"}
                   </p>
                   <p>
                     <strong>Email:</strong>{" "}
-                    {club.email ? (
-                      <a href={`mailto:${club.email}`}>{club.email}</a>
-                    ) : (
-                      "N/A"
-                    )}
+                    {club.email ? <a href={`mailto:${club.email}`}>{club.email}</a> : "N/A"}
                   </p>
-
                   {club.facebook && (
                     <p>
                       <strong>Facebook:</strong>{" "}
