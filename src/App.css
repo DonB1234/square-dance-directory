@@ -1,3 +1,5 @@
+/* App.css */
+
 /* Global reset & font */
 body {
   font-family: Arial, sans-serif;
@@ -6,49 +8,43 @@ body {
   background-color: #f5f5f5;
 }
 
-h1 {
-  text-align: center;
-  margin: 16px 0;
-}
-
 /* State Buttons */
 .state-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 12px;
 }
 
 .state-btn {
   cursor: pointer;
-  border-width: 2px;
-  border-style: solid;
+  border: 2px solid #007bff;
   padding: 6px 12px;
   font-weight: bold;
   border-radius: 4px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-  background-color: white;
-  border-color: #999;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  background-color: #fff;
+  color: #007bff;
 }
 
 .state-btn.active {
+  background-color: #007bff;
+  color: #fff;
   transform: scale(1.05);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
-  border-color: #333;
 }
 
 /* Search Input */
 .search-input {
-  display: block;
-  margin: 0 auto 16px auto;
   width: 100%;
   max-width: 400px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  margin-bottom: 12px;
 }
 
 /* Clubs Container */
@@ -56,7 +52,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 /* Club Card */
@@ -69,7 +65,7 @@ h1 {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 12px;
+  padding: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
@@ -78,7 +74,7 @@ h1 {
 .club-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 0 12px rgba(0, 0, 0, 0.05);
+              inset 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Club Header */
@@ -88,26 +84,45 @@ h1 {
   align-items: flex-start;
 }
 
+/* Club Info Section */
 .club-info {
   flex: 1;
   min-width: 0;
 }
 
 .club-name {
-  margin: 0 0 4px 0;
-  font-size: 1.2rem;
+  margin: 0 0 6px 0;
+  font-size: 1.25rem;
   font-weight: bold;
   word-wrap: break-word;
 }
 
 .club-sub {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 4px;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 8px;
   word-wrap: break-word;
 }
 
-/* Right Section: Logo + State Badge */
+/* Club Details */
+.club-info p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.club-info a {
+  color: #007bff;
+  text-decoration: none;
+  word-wrap: break-word;
+}
+
+.club-info a:hover {
+  text-decoration: underline;
+}
+
+/* Club Right Section: Logo + State Badge */
 .club-right {
   display: flex;
   flex-direction: column;
@@ -116,43 +131,37 @@ h1 {
 }
 
 .state-badge {
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-weight: bold;
   color: #fff;
   border-radius: 4px;
   margin-bottom: 8px;
   text-align: center;
-  background-color: #007bff;
   min-width: 50px;
-  word-wrap: break-word;
 }
 
+/* Club Logo */
 .club-logo {
   width: 60px;
   height: 60px;
   object-fit: contain;
   border-radius: 4px;
   flex-shrink: 0;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
 }
 
-/* Contact Links */
-.club-links {
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.club-links a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.club-links a:hover {
-  text-decoration: underline;
-}
-
+/* No Results */
 .no-results {
   font-style: italic;
   color: #888;
+  margin-top: 12px;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .clubs-container {
+    justify-content: center;
+  }
 }
