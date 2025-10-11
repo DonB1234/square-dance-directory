@@ -501,7 +501,7 @@ const clubsRaw: Club[] = [
     email: "",
     facebook: "",
     website: "https://squaredancingherveybay.com.au/",
-    logo: "/logos/Hervey Bay dancers.png",
+    logo: "/logos/Hervey%20Bay%20Square%20Dance%20Club.png",
   },
   {
     id: "QLD-007",
