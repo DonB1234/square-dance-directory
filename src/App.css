@@ -1,5 +1,3 @@
-/* App.css */
-
 /* Global reset & font */
 body {
   font-family: Arial, sans-serif;
@@ -8,12 +6,17 @@ body {
   background-color: #f5f5f5;
 }
 
+h1 {
+  text-align: center;
+  margin: 16px 0;
+}
+
 /* State Buttons */
 .state-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-start;
+  justify-content: center;
   margin-bottom: 12px;
 }
 
@@ -21,20 +24,25 @@ body {
   cursor: pointer;
   border-width: 2px;
   border-style: solid;
-  padding: 6px 8px;
+  padding: 6px 12px;
   font-weight: bold;
   border-radius: 4px;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
+  background-color: white;
+  border-color: #999;
 }
 
 .state-btn.active {
   transform: scale(1.05);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  border-color: #333;
 }
 
 /* Search Input */
 .search-input {
+  display: block;
+  margin: 0 auto 16px auto;
   width: 100%;
   max-width: 400px;
   padding: 8px 10px;
@@ -48,13 +56,13 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 /* Club Card */
 .club-card {
-  flex: 1 1 300px; /* minimum 300px width, grows equally */
-  max-width: 350px; /* optional: restrict maximum width */
+  flex: 1 1 300px;
+  max-width: 350px;
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
@@ -64,16 +72,13 @@ body {
   padding: 12px;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
-
-  /* Inner gentle border glow */
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Hover effect: subtle lift and shadow */
 .club-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
-              inset 0 0 12px rgba(0, 0, 0, 0.05);
+    inset 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Club Header */
@@ -83,10 +88,9 @@ body {
   align-items: flex-start;
 }
 
-/* Club Info Section */
 .club-info {
   flex: 1;
-  min-width: 0; /* important for text wrapping in flex containers */
+  min-width: 0;
 }
 
 .club-name {
@@ -99,26 +103,11 @@ body {
 .club-sub {
   font-size: 0.9rem;
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   word-wrap: break-word;
 }
 
-/* Details Button */
-.details-btn {
-  cursor: pointer;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  font-weight: bold;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.details-btn:hover {
-  transform: scale(1.05);
-}
-
-/* Club Right Section: Logo + State Badge */
+/* Right Section: Logo + State Badge */
 .club-right {
   display: flex;
   flex-direction: column;
@@ -133,6 +122,7 @@ body {
   border-radius: 4px;
   margin-bottom: 8px;
   text-align: center;
+  background-color: #007bff;
   min-width: 50px;
   word-wrap: break-word;
 }
@@ -145,29 +135,23 @@ body {
   flex-shrink: 0;
 }
 
-/* Club Details: Collapsible Section */
-.club-details {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-  font-size: 0.9rem;
+/* Contact Links */
+.club-links {
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.club-details.expanded {
-  max-height: 500px; /* enough to show all content */
-  opacity: 1;
+.club-links a {
+  color: #007bff;
+  text-decoration: none;
 }
 
-/* Individual Paragraph Wrapping */
-.club-details p {
-  margin: 4px 0;
-  word-wrap: break-word; /* ensures text wraps */
-  white-space: pre-wrap; /* preserves whitespace and wraps long URLs */
+.club-links a:hover {
+  text-decoration: underline;
 }
 
-/* No Results */
 .no-results {
   font-style: italic;
   color: #888;
