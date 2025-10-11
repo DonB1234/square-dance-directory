@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./App.css";
 
 interface Club {
@@ -18,6 +18,10 @@ interface Club {
   logo?: string;
 }
 
+/**
+ * State colors (background) and button border colors.
+ * Buttons use the background color and have a border color defined below.
+ */
 const stateColors: { [key: string]: string } = {
   WA: "#F5C45C",
   SA: "#ED174C",
@@ -28,58 +32,27 @@ const stateColors: { [key: string]: string } = {
   QLD: "#7D0096",
 };
 
-const clubs: Club[] = [
-  // --- Original Demo Entries ---
+/**
+ * Button border colors per your request
+ */
+const stateBorderColors: { [key: string]: string } = {
+  WA: "#000000", // black
+  SA: "#E17000", // gold
+  VIC: "#C0C0C0", // silver
+  NSW: "#FF0000", // red
+  QLD: "#006A4E", // bottle green
+  ACT: "#012B88", // resolution blue
+  TAS: "#228B22", // green (suggested)
+};
+
+/**
+ * Raw club data (as requested). NOTE: logos are set programmatically later to /assets/logos/{ID}.png
+ */
+const clubsRaw: Club[] = [
+  // core demo & provided club data (keeps the data you gave in your messages)
+  // ---------------------------------------------------------------------
   {
-    id: "wa1",
-    name: "Kiwilers",
-    city: "Perth",
-    state: "WA",
-    location: "Community Hall, Perth",
-    night: "Friday",
-    caller_cuer: "Richard Muir",
-    time: "7:30 PM - 10:00 PM",
-    level: "All Levels",
-    telephone: "08 1234 5678",
-    email: "perthsquares@example.com",
-    facebook: "https://www.facebook.com/Kiwilers",
-    website: "https://www.perthsquares.com",
-    logo: "",
-  },
-  {
-    id: "WA-001",
-    name: "Cloverwest",
-    city: "Shenton Park",
-    state: "WA",
-    location: "Shenton Park Community Centre, 240 Onslow Road, Shenton Park",
-    night: "Monday",
-    caller_cuer: "",
-    time: "7:30 PM",
-    level: "Mainstream",
-    telephone: "+61 413 156 192",
-    email: "fitz27@bigpond.com",
-    facebook: "https://www.facebook.com/cloverwest.square.dance/about/",
-    website: "",
-    logo: "https://via.placeholder.com/160?text=Cloverwest",
-  },
-  {
-    id: "WA-002",
-    name: "Wheatbelt Squares",
-    city: "Goomalling",
-    state: "WA",
-    location: "Goomalling Senior Citizens Centre, Cnr Quinlan & Lockyer Street, Goomalling",
-    night: "Alternate Mondays",
-    caller_cuer: "Robert Dew",
-    time: "7:30 PM",
-    level: "Mainstream",
-    telephone: "+61 429 962 012",
-    email: "",
-    facebook: "",
-    website: "",
-    logo: "https://via.placeholder.com/160?text=Wheatbelt+Squares",
-  },
-  {
-    id: "sa1",
+    id: "SA-001",
     name: "Adelaide Dancers",
     city: "Adelaide",
     state: "SA",
@@ -92,10 +65,10 @@ const clubs: Club[] = [
     email: "adelaidedancers@example.com",
     facebook: "https://www.facebook.com/adelaidedancers",
     website: "https://www.adelaidedancers.com",
-    logo: "https://via.placeholder.com/160?text=Adelaide+Dancers",
+    logo: "",
   },
   {
-    id: "nsw1",
+    id: "NSW-001",
     name: "Sydney Square Club",
     city: "Sydney",
     state: "NSW",
@@ -108,10 +81,10 @@ const clubs: Club[] = [
     email: "sydneysquare@example.com",
     facebook: "https://www.facebook.com/sydneysquareclub",
     website: "https://www.sydneysquareclub.com",
-    logo: "https://via.placeholder.com/160?text=Sydney+Square",
+    logo: "",
   },
   {
-    id: "tas1",
+    id: "TAS-001",
     name: "Hobart Hoedowners",
     city: "Hobart",
     state: "TAS",
@@ -124,10 +97,10 @@ const clubs: Club[] = [
     email: "hobarthoedowners@example.com",
     facebook: "https://www.facebook.com/hobarthoedowners",
     website: "https://www.hobarthoedowners.com",
-    logo: "https://via.placeholder.com/160?text=Hobart+Hoedowners",
+    logo: "",
   },
   {
-    id: "act1",
+    id: "ACT-001",
     name: "Kerr-Ly-Qs",
     city: "Canberra",
     state: "ACT",
@@ -140,10 +113,10 @@ const clubs: Club[] = [
     email: "kerrlyqs@example.com",
     facebook: "https://www.facebook.com/kerrlyqs",
     website: "https://www.kerrlyqs.com",
-    logo: "https://via.placeholder.com/160?text=Kerr-Ly-Qs",
+    logo: "",
   },
 
-  // --- New Clubs You Provided -- WA & QLD & VIC & NSW ---
+  // --- WA clubs ---
   {
     id: "WA-001",
     name: "Cloverwest",
@@ -158,7 +131,7 @@ const clubs: Club[] = [
     email: "fitz27@bigpond.com",
     facebook: "https://www.facebook.com/cloverwest.square.dance/about/",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Cloverwest"
+    logo: "",
   },
   {
     id: "WA-002",
@@ -174,7 +147,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Bunbury"
+    logo: "",
   },
   {
     id: "WA-003",
@@ -190,7 +163,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/Kiwilers",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Kiwilers"
+    logo: "",
   },
   {
     id: "WA-004",
@@ -206,7 +179,7 @@ const clubs: Club[] = [
     email: "northernstars.squaredance@outlook.com",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Northern+Stars"
+    logo: "",
   },
   {
     id: "WA-005",
@@ -222,7 +195,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Riverside"
+    logo: "",
   },
   {
     id: "WA-006",
@@ -238,7 +211,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/profile.php?id=100058285523603",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Wheatbelt"
+    logo: "",
   },
   {
     id: "WA-007",
@@ -247,14 +220,14 @@ const clubs: Club[] = [
     state: "WA",
     location: "Hamersley Recreation Centre, 20 Belvedere Road, Hamersley",
     night: "Tuesday (Rounds 1st/3rd/5th; Plus 2nd/4th)",
-    caller_cuer: "Steve Tyrner, Jim Buckingham, Greg Fawell",
+    caller_cuer: "Steve Turner, Jim Buckingham, Greg Fawell",
     time: "8:00pm",
     level: "Mainstream / Rounds / Plus",
     telephone: "+61 419 900 441",
     email: "longwood@iinet.net.au",
     facebook: "https://www.facebook.com/groups/greenfinches",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Greenfinches"
+    logo: "",
   },
   {
     id: "WA-008",
@@ -270,7 +243,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Ups+N+Downers"
+    logo: "",
   },
   {
     id: "WA-009",
@@ -286,7 +259,7 @@ const clubs: Club[] = [
     email: "dolphin.dancers@outlook.com",
     facebook: "https://www.facebook.com/dolphinsquaredancers",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Dolphin+Dancers"
+    logo: "",
   },
   {
     id: "WA-010",
@@ -302,7 +275,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/dianellarangerssdc",
     website: "https://www.dianellarangerssdc.com/",
-    logo: "https://via.placeholder.com/160?text=Dianella"
+    logo: "",
   },
   {
     id: "WA-011",
@@ -318,7 +291,7 @@ const clubs: Club[] = [
     email: "jeffgarbutt@gmail.com",
     facebook: "https://www.facebook.com/JayGeesSquares/about/",
     website: "https://jeffgarbutt.wixsite.com/jaygees",
-    logo: "https://via.placeholder.com/160?text=JayGees"
+    logo: "",
   },
   {
     id: "WA-012",
@@ -334,7 +307,7 @@ const clubs: Club[] = [
     email: "jokingcloggerswa@gmail.com",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=JoKing"
+    logo: "",
   },
   {
     id: "WA-013",
@@ -350,7 +323,7 @@ const clubs: Club[] = [
     email: "wgvsquares@gmail.com",
     facebook: "https://www.facebook.com/profile.php?id=100066477955147",
     website: "",
-    logo: "https://via.placeholder.com/160?text=WgV"
+    logo: "",
   },
   {
     id: "WA-014",
@@ -366,7 +339,7 @@ const clubs: Club[] = [
     email: "jimsgr8trax2@gmail.com",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Allemander"
+    logo: "",
   },
   {
     id: "WA-015",
@@ -382,7 +355,7 @@ const clubs: Club[] = [
     email: "happywandererssdc@gmail.com",
     facebook: "https://www.facebook.com/groups/1279808272116694",
     website: "",
-    logo: "https://via.placeholder.com/160?text=HappyWanderers"
+    logo: "",
   },
   {
     id: "WA-016",
@@ -398,7 +371,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=SwanValley"
+    logo: "",
   },
   {
     id: "WA-017",
@@ -414,7 +387,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/groups/581177512415769",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Gidgegannup"
+    logo: "",
   },
   {
     id: "WA-018",
@@ -430,9 +403,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=P%26R"
+    logo: "",
   },
 
+  // QLD Clubs
   {
     id: "QLD-001",
     name: "Suncoasters Square Dance Club",
@@ -447,7 +421,7 @@ const clubs: Club[] = [
     email: "scsdc260dixon@outlook.com",
     facebook: "https://www.facebook.com/Suncoasters",
     website: "https://www.suncoasters.com.au/",
-    logo: "https://via.placeholder.com/160?text=Suncoasters"
+    logo: "",
   },
   {
     id: "QLD-002",
@@ -463,7 +437,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "https://www.upbeatchaos.com",
-    logo: "https://via.placeholder.com/160?text=UpBeat"
+    logo: "",
   },
   {
     id: "QLD-003",
@@ -479,7 +453,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "https://www.kaysclubs.com/",
-    logo: "https://via.placeholder.com/160?text=KaysPlus"
+    logo: "",
   },
   {
     id: "QLD-004",
@@ -495,7 +469,7 @@ const clubs: Club[] = [
     email: "northprom@gmail.com",
     facebook: "https://www.facebook.com/zillmere",
     website: "http://northsidepromenaderssdc.weebly.com/",
-    logo: "https://via.placeholder.com/160?text=Northside"
+    logo: "",
   },
   {
     id: "QLD-005",
@@ -511,7 +485,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "http://gumdalegrandsliders.blogspot.com",
-    logo: "https://via.placeholder.com/160?text=Gumdale"
+    logo: "",
   },
   {
     id: "QLD-006",
@@ -527,7 +501,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "https://www.squaredancingherveybay.com.au/",
-    logo: "https://via.placeholder.com/160?text=HerveyBay"
+    logo: "",
   },
   {
     id: "QLD-007",
@@ -543,7 +517,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "https://ezsquarescaboolture.weebly.com/",
-    logo: "https://via.placeholder.com/160?text=EZ+Squares"
+    logo: "",
   },
   {
     id: "QLD-008",
@@ -559,7 +533,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/wavellwhirlawaysquaredanceclub",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Wavell"
+    logo: "",
   },
 
   // VIC Clubs
@@ -577,7 +551,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "http://www.squaredance.org.au/aurora",
-    logo: "https://via.placeholder.com/160?text=Aurora"
+    logo: "",
   },
   {
     id: "VIC-002",
@@ -593,7 +567,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/BaysideSquares/",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Bayside"
+    logo: "",
   },
   {
     id: "VIC-003",
@@ -609,7 +583,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "http://www.squaredance.org.au/diamondvalley",
-    logo: "https://via.placeholder.com/160?text=DiamondValley"
+    logo: "",
   },
   {
     id: "VIC-004",
@@ -625,7 +599,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Nunawading"
+    logo: "",
   },
   {
     id: "VIC-005",
@@ -641,7 +615,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/groups/103790413107844",
     website: "",
-    logo: "https://via.placeholder.com/160?text=SouthernCross"
+    logo: "",
   },
   {
     id: "VIC-006",
@@ -657,7 +631,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Stradbroke"
+    logo: "",
   },
   {
     id: "VIC-007",
@@ -673,7 +647,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Whitehorse"
+    logo: "",
   },
   {
     id: "VIC-008",
@@ -689,7 +663,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Essendon"
+    logo: "",
   },
   {
     id: "VIC-009",
@@ -705,7 +679,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Waverley"
+    logo: "",
   },
   {
     id: "VIC-010",
@@ -721,7 +695,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Eastern8s"
+    logo: "",
   },
   {
     id: "VIC-011",
@@ -737,7 +711,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Altona"
+    logo: "",
   },
   {
     id: "VIC-012",
@@ -753,7 +727,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Golden"
+    logo: "",
   },
   {
     id: "VIC-013",
@@ -769,7 +743,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Border"
+    logo: "",
   },
   {
     id: "VIC-014",
@@ -785,12 +759,12 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Ballarat"
+    logo: "",
   },
 
-  // NSW Clubs
+  // NSW more (subset repeated / many entries included above but in consistent pattern)
   {
-    id: "NSW-001",
+    id: "NSW-002",
     name: "Allemander Square Dance Club",
     city: "Engadine",
     state: "NSW",
@@ -803,13 +777,13 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Allemander"
+    logo: "",
   },
   {
-    id: "NSW-002",
+    id: "NSW-003",
     name: "Kerr-Ly-Qs",
     city: "Curtin (Canberra region)",
-    state: "NSW/ACT",
+    state: "NSW",
     location: "St James Church Hall, Curtin",
     night: "Tuesday",
     caller_cuer: "",
@@ -819,10 +793,10 @@ const clubs: Club[] = [
     email: "info@kerrlyqs.com.au",
     facebook: "https://www.facebook.com/KerrLyQs",
     website: "http://www.kerrlyqs.com.au",
-    logo: "https://via.placeholder.com/160?text=KerrLyQs"
+    logo: "",
   },
   {
-    id: "NSW-003",
+    id: "NSW-004",
     name: "Central Coast Ocean Waves",
     city: "East Gosford",
     state: "NSW",
@@ -835,10 +809,10 @@ const clubs: Club[] = [
     email: "cc.oceanwaves@gmail.com",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=OceanWaves"
+    logo: "",
   },
   {
-    id: "NSW-004",
+    id: "NSW-005",
     name: "Knee Deep Squares",
     city: "Lismore",
     state: "NSW",
@@ -851,10 +825,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=KneeDeep"
+    logo: "",
   },
   {
-    id: "NSW-005",
+    id: "NSW-006",
     name: "Top Cats",
     city: "Blacktown",
     state: "NSW",
@@ -867,10 +841,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/TopCatsSquareDance",
     website: "",
-    logo: "https://via.placeholder.com/160?text=TopCats"
+    logo: "",
   },
   {
-    id: "NSW-006",
+    id: "NSW-007",
     name: "Hillbillies",
     city: "North Ryde",
     state: "NSW",
@@ -883,10 +857,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Hillbillies"
+    logo: "",
   },
   {
-    id: "NSW-007",
+    id: "NSW-008",
     name: "Mavericks Square Dance Club",
     city: "Jesmond (Newcastle)",
     state: "NSW",
@@ -899,10 +873,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Mavericks"
+    logo: "",
   },
   {
-    id: "NSW-008",
+    id: "NSW-009",
     name: "Redback Squares",
     city: "Tamworth",
     state: "NSW",
@@ -915,10 +889,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Redback"
+    logo: "",
   },
   {
-    id: "NSW-009",
+    id: "NSW-010",
     name: "Hunter Valley Squares",
     city: "Maitland",
     state: "NSW",
@@ -931,10 +905,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=HunterValley"
+    logo: "",
   },
   {
-    id: "NSW-010",
+    id: "NSW-011",
     name: "Shoalhaven Square Dance Club",
     city: "Nowra",
     state: "NSW",
@@ -947,10 +921,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Shoalhaven"
+    logo: "",
   },
   {
-    id: "NSW-011",
+    id: "NSW-012",
     name: "Sapphire Squares",
     city: "Merimbula",
     state: "NSW",
@@ -963,10 +937,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Sapphire"
+    logo: "",
   },
   {
-    id: "NSW-012",
+    id: "NSW-013",
     name: "B-bar-H (Bateau Bay / Peninsula)",
     city: "Bateau Bay",
     state: "NSW",
@@ -979,10 +953,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=BbarH"
+    logo: "",
   },
   {
-    id: "NSW-013",
+    id: "NSW-014",
     name: "Wagga Wagga Square Dance Club",
     city: "Wagga Wagga",
     state: "NSW",
@@ -995,10 +969,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Wagga"
+    logo: "",
   },
   {
-    id: "NSW-014",
+    id: "NSW-015",
     name: "Port Macquarie Square Dance Club",
     city: "Port Macquarie",
     state: "NSW",
@@ -1011,10 +985,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=PortMac"
+    logo: "",
   },
   {
-    id: "NSW-015",
+    id: "NSW-016",
     name: "Coffs Harbour Square Dance Club",
     city: "Coffs Harbour",
     state: "NSW",
@@ -1027,10 +1001,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Coffs"
+    logo: "",
   },
   {
-    id: "NSW-016",
+    id: "NSW-017",
     name: "Armidale Squares",
     city: "Armidale",
     state: "NSW",
@@ -1043,10 +1017,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Armidale"
+    logo: "",
   },
   {
-    id: "NSW-017",
+    id: "NSW-018",
     name: "Dubbo Square Dance Club",
     city: "Dubbo",
     state: "NSW",
@@ -1059,10 +1033,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Dubbo"
+    logo: "",
   },
   {
-    id: "NSW-018",
+    id: "NSW-019",
     name: "Woy Woy / Peninsula Ocean Waves",
     city: "Woy Woy",
     state: "NSW",
@@ -1075,10 +1049,10 @@ const clubs: Club[] = [
     email: "ccoceanwaves@gmail.com",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=OceanWaves"
+    logo: "",
   },
   {
-    id: "NSW-019",
+    id: "NSW-020",
     name: "Illawarra Squares",
     city: "Wollongong",
     state: "NSW",
@@ -1091,10 +1065,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Illawarra"
+    logo: "",
   },
   {
-    id: "NSW-020",
+    id: "NSW-021",
     name: "Alstonville / Northern NSW Association (club listings)",
     city: "Alstonville",
     state: "NSW",
@@ -1107,10 +1081,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Alstonville"
+    logo: "",
   },
   {
-    id: "NSW-021",
+    id: "NSW-022",
     name: "Cessnock Squares",
     city: "Cessnock",
     state: "NSW",
@@ -1123,10 +1097,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Cessnock"
+    logo: "",
   },
   {
-    id: "NSW-022",
+    id: "NSW-023",
     name: "Forster / Tuncurry Square Dancers",
     city: "Forster",
     state: "NSW",
@@ -1139,10 +1113,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Forster"
+    logo: "",
   },
   {
-    id: "NSW-023",
+    id: "NSW-024",
     name: "Grafton Square Dancers",
     city: "Grafton",
     state: "NSW",
@@ -1155,10 +1129,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Grafton"
+    logo: "",
   },
   {
-    id: "NSW-024",
+    id: "NSW-025",
     name: "Orange Square Dance Club",
     city: "Orange",
     state: "NSW",
@@ -1171,10 +1145,10 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=Orange"
+    logo: "",
   },
   {
-    id: "NSW-025",
+    id: "NSW-026",
     name: "New England Squares (Armidale / Tamworth region)",
     city: "New England",
     state: "NSW",
@@ -1187,154 +1161,234 @@ const clubs: Club[] = [
     email: "",
     facebook: "",
     website: "",
-    logo: "https://via.placeholder.com/160?text=NewEngland"
+    logo: "",
   },
 ];
 
 const App: React.FC = () => {
+  // Programmatic dedupe by id, keeping the first occurrence:
+  const clubs = useMemo(() => {
+    const seen = new Set<string>();
+    const deduped: Club[] = [];
+    for (const c of clubsRaw) {
+      if (!seen.has(c.id)) {
+        seen.add(c.id);
+        // ensure logos use your CDN-like future path
+        deduped.push({
+          ...c,
+          logo: `/assets/logos/${c.id}.png`, // placeholder path for your CDN
+        });
+      }
+    }
+    return deduped;
+  }, []);
+
+  // app state
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [expandedClubIds, setExpandedClubIds] = useState<Set<string>>(new Set());
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const toggleDetails = (id: string) => {
-    const newSet = new Set(expandedClubIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
+  // When user types a search, we clear the selectedState to let search take precedence
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.trim() !== "") {
+      setSelectedState(null);
+      setExpandedId(null); // collapse any expanded when search begins (optional)
     }
-    setExpandedClubIds(newSet);
   };
 
-  const filteredClubs = clubs.filter((club) => {
-    const matchesState = selectedState ? club.state === selectedState : true;
-    const matchesSearch = club.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesState && matchesSearch;
-  });
+  // When a state button is clicked we clear the search (state filter takes effect)
+  const handleStateClick = (state: string) => {
+    setSearchTerm("");
+    setSelectedState((prev) => (prev === state ? null : state));
+    setExpandedId(null);
+  };
+
+  // Toggle single-expanded behavior
+  const toggleDetails = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  // Filter logic: if search has term, ignore state filter and match name/location/night
+  const filteredClubs = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (term.length > 0) {
+      return clubs.filter(
+        (c) =>
+          c.name.toLowerCase().includes(term) ||
+          c.location.toLowerCase().includes(term) ||
+          c.night.toLowerCase().includes(term)
+      );
+    } else if (selectedState) {
+      return clubs.filter((c) => {
+        // NOTE: some items had "NSW/ACT" in state; match if includes selectedState
+        return c.state === selectedState || c.state.includes(selectedState);
+      });
+    } else {
+      return clubs;
+    }
+  }, [clubs, selectedState, searchTerm]);
 
   return (
     <div className="App">
-      <h1>Australian Square Dance Clubs</h1>
-      
+      <h1 style={{ marginBottom: 6 }}>Australian Square Dance Clubs</h1>
+      <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: 12 }}>
+        © Don Barba 2025
+      </div>
 
       {/* State Filter Buttons */}
-      <div className="state-buttons">
-        {Object.keys(stateColors).map((state) => (
-          <button
-            key={state}
-            onClick={() => setSelectedState(selectedState === state ? null : state)}
-            style={{
-              backgroundColor: stateColors[state],
-              color: "#fff",
-              fontSize: "1.2em",
-              padding: "10px 20px",
-              margin: "5px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {state}
-          </button>
-        ))}
+      <div className="state-buttons" role="toolbar" aria-label="Filter by state">
+        {Object.keys(stateColors).map((stateKey) => {
+          // use NSW button width as standard — we set CSS but can set inline width for consistent sizing
+          const bg = stateColors[stateKey] || "#eee";
+          const border = stateBorderColors[stateKey] || "#000";
+          const isActive = selectedState === stateKey;
+
+          return (
+            <button
+              key={stateKey}
+              onClick={() => handleStateClick(stateKey)}
+              className={`state-btn ${isActive ? "active" : ""}`}
+              style={{
+                backgroundColor: bg,
+                borderColor: border,
+                color: "#fff",
+                width: 100, // uniform size; adjust if needed
+              }}
+            >
+              {stateKey}
+            </button>
+          );
+        })}
       </div>
 
       {/* Search Input */}
-      <input
-        type="text"
-        placeholder="Search clubs..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{
-          padding: "10px",
-          margin: "10px 0",
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-          width: "60%",
-          fontSize: "1em",
-        }}
-      />
+      <div style={{ marginTop: 12, marginBottom: 18 }}>
+        <input
+          type="text"
+          aria-label="Search clubs"
+          placeholder="Search clubs by name, location or night..."
+          value={searchTerm}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="search-input"
+        />
+      </div>
 
       {/* Clubs Container */}
       <div className="clubs-container">
-        {filteredClubs.map((club) => (
-          <div
-            key={club.id}
-            className="club-card"
-            style={{
-              border: `3px solid ${stateColors[club.state] || "#000"}`,
-              borderRadius: "12px",
-              padding: "15px",
-              margin: "10px",
-              backgroundColor: "#fff",
-              boxShadow: "0 3px 6px rgba(0,0,0,0.1)",
-              transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget.style.transform = "scale(1.02)");
-              (e.currentTarget.style.boxShadow = "0 8px 12px rgba(0,0,0,0.2)");
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget.style.transform = "scale(1)");
-              (e.currentTarget.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)");
-            }}
-          >
-            <div className="club-header" style={{ display: "flex", alignItems: "center" }}>
-              {club.logo && (
-                <img
-                  src={club.logo}
-                  alt={club.name}
-                  style={{ width: "80px", height: "80px", borderRadius: "10px", marginRight: "15px" }}
-                />
-              )}
-              <div>
-                <h2>{club.name}</h2>
-                <button
-                  onClick={() => toggleDetails(club.id)}
-                  style={{
-                    backgroundColor: stateColors[club.state],
-                    color: "#fff",
-                    padding: "6px 12px",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {expandedClubIds.has(club.id) ? "Hide Details" : "View Details"}
-                </button>
-              </div>
-            </div>
+        {filteredClubs.length === 0 ? (
+          <div className="no-results">No clubs match your search/filter.</div>
+        ) : (
+          filteredClubs.map((club) => {
+            const borderColor = stateBorderColors[club.state] || "#000";
+            const bgBadge = stateColors[club.state] || "#999";
 
-            {expandedClubIds.has(club.id) && (
-              <div className="club-details" style={{ marginTop: "10px", textAlign: "left",fontSize: "1.1em"  }}>
-                <p><strong>City:</strong> {club.city}</p>
-                <p><strong>Location:</strong> {club.location}</p>
-                <p><strong>Night:</strong> {club.night}</p>
-                <p><strong>Caller/Cuer:</strong> {club.caller_cuer || "N/A"}</p>
-                <p><strong>Time:</strong> {club.time}</p>
-                <p><strong>Level:</strong> {club.level}</p>
-                <p><strong>Telephone:</strong> {club.telephone}</p>
-                <p><strong>Email:</strong> <a href={`mailto:${club.email}`}>{club.email}</a></p>
-                {club.facebook && (
+            return (
+              <div
+                key={club.id}
+                className="club-card"
+                style={{
+                  border: `3px solid ${borderColor}`,
+                }}
+              >
+                <div className="club-header">
+                  <div className="club-info">
+                    <h2 className="club-name">{club.name}</h2>
+                    <div className="club-sub">
+                      <span>{club.city}</span> • <span>{club.night}</span>
+                    </div>
+                    <div style={{ marginTop: 8 }}>
+                      <button
+                        className="details-btn"
+                        onClick={() => toggleDetails(club.id)}
+                        aria-expanded={expandedId === club.id}
+                        style={{
+                          backgroundColor: bgBadge,
+                        }}
+                      >
+                        {expandedId === club.id ? "Hide Details" : "View Details"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right-side logo & state badge */}
+                  <div className="club-right">
+                    <div
+                      className="state-badge"
+                      style={{
+                        backgroundColor: bgBadge,
+                        border: `2px solid ${borderColor}`,
+                      }}
+                      aria-hidden
+                    >
+                      {club.state}
+                    </div>
+
+                    <img
+                      src={club.logo}
+                      alt={`${club.name} logo`}
+                      className="club-logo"
+                      onError={(e) => {
+                        // If asset not found yet, fallback to a lightweight placeholder
+                        (e.currentTarget as HTMLImageElement).src =
+                          "/assets/logos/placeholder.png";
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Collapsible details */}
+                <div className={`club-details ${expandedId === club.id ? "expanded" : ""}`}>
                   <p>
-                    <strong>Facebook:</strong>{" "}
-                    <a href={club.facebook} target="_blank" rel="noreferrer">
-                      {club.facebook}
-                    </a>
+                    <strong>Location:</strong> {club.location || "N/A"}
                   </p>
-                )}
-                {club.website && (
                   <p>
-                    <strong>Website:</strong>{" "}
-                    <a href={club.website} target="_blank" rel="noreferrer">
-                      {club.website}
-                    </a>
+                    <strong>Time:</strong> {club.time || "N/A"}
                   </p>
-                )}
+                  <p>
+                    <strong>Caller/Cuer:</strong> {club.caller_cuer || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Level:</strong> {club.level || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Telephone:</strong>{" "}
+                    {club.telephone ? (
+                      <a href={`tel:${club.telephone.replace(/\s+/g, "")}`}>{club.telephone}</a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+                  <p>
+                    <strong>Email:</strong>{" "}
+                    {club.email ? (
+                      <a href={`mailto:${club.email}`}>{club.email}</a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+
+                  {club.facebook && (
+                    <p>
+                      <strong>Facebook:</strong>{" "}
+                      <a href={club.facebook} target="_blank" rel="noreferrer">
+                        {club.facebook}
+                      </a>
+                    </p>
+                  )}
+                  {club.website && (
+                    <p>
+                      <strong>Website:</strong>{" "}
+                      <a href={club.website} target="_blank" rel="noreferrer">
+                        {club.website}
+                      </a>
+                    </p>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        ))}
+            );
+          })
+        )}
       </div>
     </div>
   );
