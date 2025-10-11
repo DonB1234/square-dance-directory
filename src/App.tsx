@@ -1,12 +1,6 @@
 import React, { useMemo, useState } from "react";
 import "./App.css";
-const generateLogoPath = (clubName: string) => {
-  const cleanName = clubName
-    .toLowerCase()
-    .replace(/[^\w\s]/g, "") // remove punctuation
-    .replace(/\s+/g, "-"); // replace spaces with dash
-  return `/assets/logos/${cleanName}.png`;
-};
+
 
 interface Club {
   id: string;
@@ -1158,50 +1152,230 @@ const clubsRaw: Club[] = [
 ];
 
 const App: React.FC = () => {
+  // Programmatic dedupe by id, keeping the first occurrence:
   const clubs = useMemo(() => {
     const seen = new Set<string>();
-    return clubsRaw
-      .filter((c) => {
-        if (seen.has(c.id)) return false;
+    const deduped: Club[] = [];
+    for (const c of clubsRaw) {
+      if (!seen.has(c.id)) {
         seen.add(c.id);
-        return true;
-      })
-      .map((c) => ({
-        ...c,
-        logo: generateLogoPath(c.name), // logo path is now correctly in scope
-      }));
+        // ensure logos use your CDN-like future path
+        deduped.push({
+          ...c,
+          logo: `/assets/logos/${c.id}.png`, // placeholder path for your CDN
+        });
+      }
+    }
+    return deduped;
   }, []);
 
-  // Example render by state
-  const clubsByState = useMemo(() => {
-    return clubs.reduce<Record<string, typeof clubsRaw>>((acc, club) => {
-      if (!acc[club.state]) acc[club.state] = [];
-      acc[club.state].push(club);
-      return acc;
-    }, {});
-  }, [clubs]);
+  // app state
+  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // When user types a search, we clear the selectedState to let search take precedence
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.trim() !== "") {
+      setSelectedState(null);
+      setExpandedId(null); // collapse any expanded when search begins (optional)
+    }
+  };
+
+  // When a state button is clicked we clear the search (state filter takes effect)
+  const handleStateClick = (state: string) => {
+    setSearchTerm("");
+    setSelectedState((prev) => (prev === state ? null : state));
+    setExpandedId(null);
+  };
+
+  // Toggle single-expanded behavior
+  const toggleDetails = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  // Filter logic: if search has term, ignore state filter and match name/location/night
+  const filteredClubs = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (term.length > 0) {
+      return clubs.filter(
+        (c) =>
+          c.name.toLowerCase().includes(term) ||
+          c.location.toLowerCase().includes(term) ||
+          c.night.toLowerCase().includes(term)
+      );
+    } else if (selectedState) {
+      return clubs.filter((c) => {
+        // NOTE: some items had "NSW/ACT" in state; match if includes selectedState
+        return c.state === selectedState || c.state.includes(selectedState);
+      });
+    } else {
+      return clubs;
+    }
+  }, [clubs, selectedState, searchTerm]);
 
   return (
     <div className="App">
-      <h1>Australian Square Dance Clubs</h1>
-      {Object.entries(clubsByState).map(([state, stateClubs]) => (
-        <div key={state}>
-          <h2>{state}</h2>
-          <ul>
-            {stateClubs.map((club) => (
-              <li key={club.id}>
-                <img
-                  src={club.logo}
-                  alt={`${club.name} logo`}
-                  width={50}
-                  height={50}
-                />{" "}
-                {club.name} - {club.city}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <h1 style={{ marginBottom: 6 }}>Australian Square Dance Clubs</h1>
+      <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: 12 }}>
+        © Don Barba 2025
+      </div>
+
+      {/* State Filter Buttons */}
+      <div className="state-buttons" role="toolbar" aria-label="Filter by state">
+        {Object.keys(stateColors).map((stateKey) => {
+          // use NSW button width as standard — we set CSS but can set inline width for consistent sizing
+          const bg = stateColors[stateKey] || "#eee";
+          const border = stateBorderColors[stateKey] || "#000";
+          const isActive = selectedState === stateKey;
+
+          return (
+            <button
+              key={stateKey}
+              onClick={() => handleStateClick(stateKey)}
+              className={`state-btn ${isActive ? "active" : ""}`}
+              style={{
+                backgroundColor: bg,
+                borderColor: border,
+                color: "#fff",
+                width: 100, // uniform size; adjust if needed
+              }}
+            >
+              {stateKey}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search Input */}
+      <div style={{ marginTop: 12, marginBottom: 18 }}>
+        <input
+          type="text"
+          aria-label="Search clubs"
+          placeholder="Search clubs by name, location or night..."
+          value={searchTerm}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      {/* Clubs Container */}
+      <div className="clubs-container">
+        {filteredClubs.length === 0 ? (
+          <div className="no-results">No clubs match your search/filter.</div>
+        ) : (
+          filteredClubs.map((club) => {
+            const borderColor = stateBorderColors[club.state] || "#000";
+            const bgBadge = stateColors[club.state] || "#999";
+
+            return (
+              <div
+                key={club.id}
+                className="club-card"
+                style={{
+                  border: `3px solid ${borderColor}`,
+                }}
+              >
+                <div className="club-header">
+                  <div className="club-info">
+                    <h2 className="club-name">{club.name}</h2>
+                    <div className="club-sub">
+                      <span>{club.city}</span> • <span>{club.night}</span>
+                    </div>
+                    <div style={{ marginTop: 8 }}>
+                      <button
+                        className="details-btn"
+                        onClick={() => toggleDetails(club.id)}
+                        aria-expanded={expandedId === club.id}
+                        style={{
+                          backgroundColor: bgBadge,
+                        }}
+                      >
+                        {expandedId === club.id ? "Hide Details" : "View Details"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right-side logo & state badge */}
+                  <div className="club-right">
+                    <div
+                      className="state-badge"
+                      style={{
+                        backgroundColor: bgBadge,
+                        border: `2px solid ${borderColor}`,
+                      }}
+                      aria-hidden
+                    >
+                      {club.state}
+                    </div>
+
+                    <img
+                      src={club.logo}
+                      alt={`${club.name} logo`}
+                      className="club-logo"
+                      onError={(e) => {
+                        // If asset not found yet, fallback to a lightweight placeholder
+                        (e.currentTarget as HTMLImageElement).src =
+                          "/assets/logos/placeholder.png";
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Collapsible details */}
+                <div className={`club-details ${expandedId === club.id ? "expanded" : ""}`}>
+                  <p>
+                    <strong>Location:</strong> {club.location || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {club.time || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Caller/Cuer:</strong> {club.caller_cuer || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Level:</strong> {club.level || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Telephone:</strong>{" "}
+                    {club.telephone ? (
+                      <a href={`tel:${club.telephone.replace(/\s+/g, "")}`}>{club.telephone}</a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+                  <p>
+                    <strong>Email:</strong>{" "}
+                    {club.email ? (
+                      <a href={`mailto:${club.email}`}>{club.email}</a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+
+                  {club.facebook && (
+                    <p>
+                      <strong>Facebook:</strong>{" "}
+                      <a href={club.facebook} target="_blank" rel="noreferrer">
+                        {club.facebook}
+                      </a>
+                    </p>
+                  )}
+                  {club.website && (
+                    <p>
+                      <strong>Website:</strong>{" "}
+                      <a href={club.website} target="_blank" rel="noreferrer">
+                        {club.website}
+                      </a>
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 };
