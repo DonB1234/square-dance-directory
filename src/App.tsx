@@ -20,9 +20,7 @@ interface Club {
   logo?: string;
 }
 
-/**
- * State colors (used for badge background)
- */
+// State colors (used for badge and buttons)
 const stateColors: { [key: string]: string } = {
   WA: "#F5C45C",
   SA: "#ED174C",
@@ -33,17 +31,15 @@ const stateColors: { [key: string]: string } = {
   QLD: "#7D0096",
 };
 
-/**
- * State button border colors (user-specified)
- */
+// State button border colors
 const stateButtonBorders: { [key: string]: string } = {
-  WA: "#000000", // black
-  SA: "#E17000", // gold
-  VIC: "#C0C0C0", // silver
-  NSW: "#FF0000", // red
-  QLD: "#006A4E", // bottle green
-  ACT: "#012B88", // resolution blue
-  TAS: "#A10035", // keep TAS same as color (or choose another if needed)
+  WA: "#000000",
+  SA: "#E17000",
+  VIC: "#C0C0C0",
+  NSW: "#FF0000",
+  QLD: "#006A4E",
+  ACT: "#012B88",
+  TAS: "#A10035",
 };
 
 /**
@@ -67,6 +63,22 @@ const rawClubs: Club[] = [
     level: "Mainstream",
     telephone: "08 9876 5432",
     email: "adelaidedancers@example.com",
+    facebook: "https://www.facebook.com/adelaidedancers",
+    website: "https://www.adelaidedancers.com",
+    logo: "https://via.placeholder.com/160?text=Adelaide+Dancers",
+  }, 
+  {
+    id: "sa2",
+    name: "Sunset Twisters",
+    city: "Adelaide",
+    state: "SA",
+    location: "Noarlunga District Senior Citizens Club, 9 Hunt Crescent, Christies Beach",
+    night: "Tuesday",
+    caller_cuer: "Les Tulloch",
+    time: "7:00 PM - 9:30 PM",
+    level: "Mainstream",
+    telephone: "0484 233 826",
+    email: "",
     facebook: "https://www.facebook.com/adelaidedancers",
     website: "https://www.adelaidedancers.com",
     logo: "https://via.placeholder.com/160?text=Adelaide+Dancers",
@@ -223,7 +235,7 @@ const rawClubs: Club[] = [
     city: "Hamersley",
     state: "WA",
     location: "Hamersley Recreation Centre, 20 Belvedere Road, Hamersley",
-    night: "Tuesday (Rounds 1st/3rd/5th; Plus 2nd/4th)",
+    night: "Tuesday",
     caller_cuer: "Steve Turner, Jim Buckingham, Greg Fawell",
     time: "8:00pm",
     level: "Mainstream / Rounds / Plus",
@@ -315,7 +327,7 @@ const rawClubs: Club[] = [
   },
   {
     id: "WA-013",
-    name: "White Gum Valley (WgV Squares)",
+    name: "White Gum Valley Squares",
     city: "Rossmoyne / Perth",
     state: "WA",
     location: "Rossmoyne Bowling Club, 35 Tuscon Street, Rossmoyne",
@@ -1170,24 +1182,17 @@ const rawClubs: Club[] = [
 ];
 
 
-/** App Component */
+
+// Dedupe clubs by id
+const clubs: Club[] = rawClubs; // Removed useMemo outside App component
+
 const App: React.FC = () => {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedClubId, setExpandedClubId] = useState<string | null>(null);
 
-  /** Dedupe clubs by id */
-  const clubs: Club[] = useMemo(() => {
-    const map = new Map<string, Club>();
-    for (const c of rawClubs) {
-      if (!map.has(c.id)) {
-        map.set(c.id, c);
-      }
-    }
-    return Array.from(map.values());
-  }, []);
+  const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
 
-  /** Filtered clubs */
   const filteredClubs = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (term.length > 0) {
@@ -1199,79 +1204,65 @@ const App: React.FC = () => {
       );
     }
     if (selectedState) {
-      return clubs.filter((c) => c.state && c.state.toUpperCase().includes(selectedState));
+      return clubs.filter((c) =>
+        c.state.toUpperCase().includes(selectedState)
+      );
     }
     return clubs;
-  }, [searchTerm, selectedState, clubs]);
+  }, [searchTerm, selectedState]);
 
-  /** Toggle club details */
   const toggleDetails = (id: string) => {
     setExpandedClubId((prev) => (prev === id ? null : id));
-  };
-
-  const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
-
-  /** Fixed button style for all clubs */
-  const detailsButtonStyle: React.CSSProperties = {
-    width: 80,
-    height: 36,
-    fontSize: 13,
-    fontWeight: 600,
-    textAlign: "center",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 8,
-    border: "none",
-    cursor: "pointer",
   };
 
   return (
     <div className="App" style={{ padding: 12 }}>
       <h1 style={{ marginBottom: 2 }}>Australian Square Dance Clubs</h1>
-      <div style={{ fontSize: 13, color: "#666", marginBottom: 14 }}>© Don Barba 2025</div>
-
-      {/* State Filter Buttons */}
-      <div className="state-buttons">
-        {states.map((st) => (
-          <button
-            key={st}
-            onClick={() => setSelectedState((prev) => (prev === st ? null : st))}
-            style={{
-              minWidth: 92,
-              height: 44,
-              fontSize: 16,
-              padding: "8px 10px",
-              margin: 6,
-              borderRadius: 8,
-              border: `2px solid ${selectedState === st ? stateButtonBorders[st] || "#000" : stateButtonBorders[st] || "#ddd"}`,
-              cursor: "pointer",
-              background: "#fff",
-              boxShadow: selectedState === st ? "0 2px 8px rgba(0,0,0,0.12)" : "none",
-            }}
-          >
-            {st}
-          </button>
-        ))}
-        <button
-          onClick={() => setSelectedState(null)}
-          style={{
-            minWidth: 92,
-            height: 44,
-            fontSize: 16,
-            padding: "8px 10px",
-            margin: 6,
-            borderRadius: 8,
-            border: selectedState === null ? "2px solid #666" : "2px solid #ddd",
-            cursor: "pointer",
-            background: "#fff",
-          }}
-        >
-          All
-        </button>
+      <div style={{ fontSize: 13, color: "#666", marginBottom: 14 }}>
+        © Don Barba 2025
       </div>
 
-      {/* Search Input */}
+      {/* --- STATE BUTTONS --- */}
+      <div className="state-buttons">
+        {["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD", "All"].map(
+          (st, idx) => {
+            const isAll = st === "All";
+            const isActive = isAll ? selectedState === null : selectedState === st;
+            const baseColor = isAll ? "#666" : stateColors[st] || "#ccc";
+
+            return (
+              <button
+                key={st}
+                onClick={() => {
+                  if (isAll) setSelectedState(null);
+                  else setSelectedState((prev) => (prev === st ? null : st));
+                }}
+                style={{
+                  height: 38,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  borderRadius: 6,
+                  border: `2px solid ${stateButtonBorders[st] || "#ddd"}`,
+                  background: baseColor,
+                  color: "#fff",
+                  boxShadow: isActive
+                    ? "0 2px 8px rgba(0,0,0,0.25)"
+                    : "0 1px 3px rgba(0,0,0,0.12)",
+                  transform: isActive ? "scale(1.05)" : "scale(1)",
+                  transition: "all 0.2s ease",
+                }}
+                aria-pressed={isActive}
+                onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(110%)")}
+                onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
+              >
+                {st}
+              </button>
+            );
+          }
+        )}
+      </div>
+
+      {/* --- SEARCH INPUT --- */}
       <div style={{ marginBottom: 12 }}>
         <input
           type="text"
@@ -1293,7 +1284,7 @@ const App: React.FC = () => {
         />
       </div>
 
-      {/* Clubs Container */}
+      {/* --- CLUBS GRID --- */}
       <div
         className="clubs-container"
         style={{
@@ -1303,7 +1294,9 @@ const App: React.FC = () => {
         }}
       >
         {filteredClubs.length === 0 && (
-          <div style={{ padding: 12, color: "#666" }}>No clubs match your search / filter.</div>
+          <div style={{ padding: 12, color: "#666" }}>
+            No clubs match your search / filter.
+          </div>
         )}
 
         {filteredClubs.map((club) => {
@@ -1320,7 +1313,6 @@ const App: React.FC = () => {
                 padding: 12,
                 margin: 0,
                 backgroundColor: "#fff",
-                boxShadow: "0 3px 6px rgba(0,0,0,0.06)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -1331,6 +1323,7 @@ const App: React.FC = () => {
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                {/* Logo + Name */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
                   {club.logo ? (
                     <img
@@ -1357,15 +1350,15 @@ const App: React.FC = () => {
                   )}
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h2 style={{ margin: 0, fontSize: 18, lineHeight: "1.05" }}>{club.name}</h2>
+                    <h2 style={{ margin: 0, fontSize: 18 }}>{club.name}</h2>
                     <div style={{ fontSize: 13, color: "#555", marginTop: 6 }}>
                       {club.city} • {club.night}
                     </div>
                   </div>
                 </div>
 
-                {/* Right side badge & button */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                {/* Right side: state badge + view button */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div
                     style={{
                       background: badgeColor,
@@ -1374,57 +1367,47 @@ const App: React.FC = () => {
                       padding: "6px 10px",
                       fontWeight: 700,
                       fontSize: 13,
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-                      whiteSpace: "nowrap",
+                      boxShadow: "0 1px 2px rgba(0,0,0,0.15)",
+                      textAlign: "center",
                     }}
                   >
                     {club.state}
                   </div>
 
-                  {/* View Details Button */}
                   <button
                     onClick={() => toggleDetails(club.id)}
-                    style={{ ...detailsButtonStyle, background: badgeColor, color: "#fff" }}
-                    aria-expanded={expandedClubId === club.id}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 8,
+                      fontWeight: 600,
+                      fontSize: 14,
+                      backgroundColor: "#008CBA",
+                      color: "#fff",
+                      border: "none",
+                      height: 36,
+                      minWidth: 96,
+                      cursor: "pointer",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      transition: "all 0.2s ease",
+                    }}
                   >
                     {expandedClubId === club.id ? "Hide Details" : "View Details"}
                   </button>
                 </div>
               </div>
 
-              {/* Details Section */}
-              <div className={`club-details ${expandedClubId === club.id ? "expanded" : ""}`}>
-                {expandedClubId === club.id && (
-                  <div>
-                    <p>
-                      <strong>Location:</strong> {club.location || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Caller/Cuer:</strong> {club.caller_cuer || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Time:</strong> {club.time || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Level:</strong> {club.level || "N/A"}
-                    </p>
-                    <p style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {club.telephone && <a href={`tel:${club.telephone}`}>📞 {club.telephone}</a>}
-                      {club.email && <a href={`mailto:${club.email}`}>✉️ {club.email}</a>}
-                      {club.facebook && (
-                        <a href={club.facebook} target="_blank" rel="noreferrer">
-                          👍 Facebook
-                        </a>
-                      )}
-                      {club.website && (
-                        <a href={club.website} target="_blank" rel="noreferrer">
-                          🔗 Website
-                        </a>
-                      )}
-                    </p>
-                  </div>
-                )}
-              </div>
+              {expandedClubId === club.id && (
+                <div style={{ marginTop: 12, fontSize: 13, lineHeight: 1.45 }}>
+                  {club.location && <div><strong>Location:</strong> {club.location}</div>}
+                  {club.time && <div><strong>Time:</strong> {club.time}</div>}
+                  {club.level && <div><strong>Level:</strong> {club.level}</div>}
+                  {club.caller_cuer && <div><strong>Caller/Cuer:</strong> {club.caller_cuer}</div>}
+                  {club.telephone && <div><strong>Tel:</strong> {club.telephone}</div>}
+                  {club.email && <div><strong>Email:</strong> {club.email}</div>}
+                  {club.facebook && <div><strong>Facebook:</strong> <a href={club.facebook} target="_blank">{club.facebook}</a></div>}
+                  {club.website && <div><strong>Website:</strong> <a href={club.website} target="_blank">{club.website}</a></div>}
+                </div>
+              )}
             </div>
           );
         })}
