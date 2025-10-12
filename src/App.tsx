@@ -1170,17 +1170,13 @@ const rawClubs: Club[] = [
 ];
 
 /** App component */
+
 const App: React.FC = () => {
-  /** Selected state filter */
   const [selectedState, setSelectedState] = useState<string | null>(null);
-
-  /** Search term */
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  /** Expanded club ID */
   const [expandedClubId, setExpandedClubId] = useState<string | null>(null);
 
-  /** Dedupe clubs by ID */
+  // Deduplicate clubs by id inside the component
   const clubs: Club[] = useMemo(() => {
     const map = new Map<string, Club>();
     for (const c of rawClubs) {
@@ -1191,10 +1187,9 @@ const App: React.FC = () => {
     return Array.from(map.values());
   }, []);
 
-  /** State filter buttons */
   const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
 
-  /** Filtered clubs based on search or state */
+  // Filter clubs based on search or state
   const filteredClubs = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (term.length > 0) {
@@ -1206,19 +1201,15 @@ const App: React.FC = () => {
       );
     }
     if (selectedState) {
-      return clubs.filter((c) =>
-        c.state && c.state.toUpperCase().includes(selectedState)
-      );
+      return clubs.filter((c) => c.state && c.state.toUpperCase().includes(selectedState));
     }
     return clubs;
   }, [searchTerm, selectedState, clubs]);
 
-  /** Toggle details expand/collapse */
   const toggleDetails = (id: string) => {
     setExpandedClubId((prev) => (prev === id ? null : id));
   };
 
-  /** Base button style */
   const stateButtonStyleBase: React.CSSProperties = {
     minWidth: 92,
     height: 44,
@@ -1243,17 +1234,12 @@ const App: React.FC = () => {
         {states.map((st) => (
           <button
             key={st}
-            onClick={() =>
-              setSelectedState((prev) => (prev === st ? null : st))
-            }
+            onClick={() => setSelectedState((prev) => (prev === st ? null : st))}
             style={{
               ...stateButtonStyleBase,
               borderColor:
-                selectedState === st
-                  ? stateButtonBorders[st] || "#000"
-                  : stateButtonBorders[st] || "#ddd",
-              boxShadow:
-                selectedState === st ? `0 2px 8px rgba(0,0,0,0.12)` : "none",
+                selectedState === st ? stateButtonBorders[st] || "#000" : stateButtonBorders[st] || "#ddd",
+              boxShadow: selectedState === st ? `0 2px 8px rgba(0,0,0,0.12)` : "none",
             }}
             aria-pressed={selectedState === st}
           >
@@ -1272,7 +1258,7 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Search */}
+      {/* Search Input */}
       <div style={{ marginBottom: 12 }}>
         <input
           type="text"
@@ -1294,27 +1280,22 @@ const App: React.FC = () => {
         />
       </div>
 
-      {/* Clubs */}
+      {/* Clubs Container */}
       <div
         className="clubs-container"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: 12,
-          alignItems: "stretch",
         }}
       >
         {filteredClubs.length === 0 && (
-          <div style={{ padding: 12, color: "#666" }}>
-            No clubs match your search / filter.
-          </div>
+          <div style={{ padding: 12, color: "#666" }}>No clubs match your search / filter.</div>
         )}
 
         {filteredClubs.map((club) => {
           const badgeColor = stateColors[club.state] || "#999";
-          const borderColor =
-            stateButtonBorders[club.state as keyof typeof stateButtonBorders] ||
-            "#ddd";
+          const borderColor = stateButtonBorders[club.state as keyof typeof stateButtonBorders] || "#ddd";
 
           return (
             <div
@@ -1324,19 +1305,17 @@ const App: React.FC = () => {
                 border: `2px solid ${borderColor}`,
                 borderRadius: 12,
                 padding: 12,
+                margin: 0,
                 backgroundColor: "#fff",
                 boxShadow: "0 3px 6px rgba(0,0,0,0.06)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
                 minHeight: 160,
-                overflow: "hidden",
-                boxSizing: "border-box",
-                transition: "box-shadow 0.18s, transform 0.15s",
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                {/* Logo and name */}
+                {/* Logo + Name */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
                   {club.logo ? (
                     <img
@@ -1369,16 +1348,14 @@ const App: React.FC = () => {
                   )}
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h2 style={{ margin: 0, fontSize: 18, lineHeight: "1.05" }}>
-                      {club.name}
-                    </h2>
+                    <h2 style={{ margin: 0, fontSize: 18, lineHeight: "1.05" }}>{club.name}</h2>
                     <div style={{ fontSize: 13, color: "#555", marginTop: 6 }}>
                       {club.city} • {club.night}
                     </div>
                   </div>
                 </div>
 
-                {/* Badge and toggle */}
+                {/* State badge + toggle */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div
                     style={{
@@ -1394,6 +1371,7 @@ const App: React.FC = () => {
                   >
                     {club.state}
                   </div>
+
                   <button
                     onClick={() => toggleDetails(club.id)}
                     style={{
@@ -1412,19 +1390,8 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Details */}
-              <div
-                className="club-details"
-                style={{
-                  marginTop: 10,
-                  textAlign: "left",
-                  fontSize: 14,
-                  lineHeight: 1.35,
-                  wordBreak: "break-word",
-                  overflow: "hidden",
-                  transition: "max-height 0.25s ease",
-                }}
-              >
+              {/* Collapsible Details */}
+              <div className={`club-details ${expandedClubId === club.id ? "expanded" : ""}`}>
                 {expandedClubId === club.id && (
                   <div>
                     <p>
@@ -1439,28 +1406,27 @@ const App: React.FC = () => {
                     <p>
                       <strong>Level:</strong> {club.level || "N/A"}
                     </p>
-                    <p>
-                      <strong>Contact:</strong> {club.telephone || "N/A"} |{" "}
-                      {club.email || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Facebook:</strong>{" "}
-                      {club.facebook ? (
-                        <a href={club.facebook} target="_blank" rel="noopener noreferrer">
-                          {club.facebook}
+
+                    <p style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {club.telephone && (
+                        <a href={`tel:${club.telephone}`} style={{ color: "#0066cc" }}>
+                          📞 {club.telephone}
                         </a>
-                      ) : (
-                        "N/A"
                       )}
-                    </p>
-                    <p>
-                      <strong>Website:</strong>{" "}
-                      {club.website ? (
-                        <a href={club.website} target="_blank" rel="noopener noreferrer">
-                          {club.website}
+                      {club.email && (
+                        <a href={`mailto:${club.email}`} style={{ color: "#0066cc" }}>
+                          ✉️ {club.email}
                         </a>
-                      ) : (
-                        "N/A"
+                      )}
+                      {club.facebook && (
+                        <a href={club.facebook} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
+                          👍 Facebook
+                        </a>
+                      )}
+                      {club.website && (
+                        <a href={club.website} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
+                          🔗 Website
+                        </a>
                       )}
                     </p>
                   </div>
