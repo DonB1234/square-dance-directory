@@ -1169,14 +1169,14 @@ const rawClubs: Club[] = [
   },
 ];
 
-/** App component */
 
+/** App Component */
 const App: React.FC = () => {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedClubId, setExpandedClubId] = useState<string | null>(null);
 
-  // Deduplicate clubs by id inside the component
+  /** Dedupe clubs by id */
   const clubs: Club[] = useMemo(() => {
     const map = new Map<string, Club>();
     for (const c of rawClubs) {
@@ -1187,9 +1187,7 @@ const App: React.FC = () => {
     return Array.from(map.values());
   }, []);
 
-  const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
-
-  // Filter clubs based on search or state
+  /** Filtered clubs */
   const filteredClubs = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (term.length > 0) {
@@ -1206,28 +1204,32 @@ const App: React.FC = () => {
     return clubs;
   }, [searchTerm, selectedState, clubs]);
 
+  /** Toggle club details */
   const toggleDetails = (id: string) => {
     setExpandedClubId((prev) => (prev === id ? null : id));
   };
 
-  const stateButtonStyleBase: React.CSSProperties = {
-    minWidth: 92,
-    height: 44,
-    fontSize: 16,
-    padding: "8px 10px",
-    margin: 6,
+  const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
+
+  /** Fixed button style for all clubs */
+  const detailsButtonStyle: React.CSSProperties = {
+    width: 120,
+    height: 36,
+    fontSize: 13,
+    fontWeight: 600,
+    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
-    border: "2px solid #ddd",
+    border: "none",
     cursor: "pointer",
-    background: "#fff",
   };
 
   return (
     <div className="App" style={{ padding: 12 }}>
       <h1 style={{ marginBottom: 2 }}>Australian Square Dance Clubs</h1>
-      <div style={{ fontSize: 13, color: "#666", marginBottom: 14 }}>
-        © Don Barba 2025
-      </div>
+      <div style={{ fontSize: 13, color: "#666", marginBottom: 14 }}>© Don Barba 2025</div>
 
       {/* State Filter Buttons */}
       <div className="state-buttons">
@@ -1236,12 +1238,17 @@ const App: React.FC = () => {
             key={st}
             onClick={() => setSelectedState((prev) => (prev === st ? null : st))}
             style={{
-              ...stateButtonStyleBase,
-              borderColor:
-                selectedState === st ? stateButtonBorders[st] || "#000" : stateButtonBorders[st] || "#ddd",
-              boxShadow: selectedState === st ? `0 2px 8px rgba(0,0,0,0.12)` : "none",
+              minWidth: 92,
+              height: 44,
+              fontSize: 16,
+              padding: "8px 10px",
+              margin: 6,
+              borderRadius: 8,
+              border: `2px solid ${selectedState === st ? stateButtonBorders[st] || "#000" : stateButtonBorders[st] || "#ddd"}`,
+              cursor: "pointer",
+              background: "#fff",
+              boxShadow: selectedState === st ? "0 2px 8px rgba(0,0,0,0.12)" : "none",
             }}
-            aria-pressed={selectedState === st}
           >
             {st}
           </button>
@@ -1249,9 +1256,15 @@ const App: React.FC = () => {
         <button
           onClick={() => setSelectedState(null)}
           style={{
-            ...stateButtonStyleBase,
-            borderColor: selectedState === null ? "#666" : "#ddd",
-            marginLeft: 8,
+            minWidth: 92,
+            height: 44,
+            fontSize: 16,
+            padding: "8px 10px",
+            margin: 6,
+            borderRadius: 8,
+            border: selectedState === null ? "2px solid #666" : "2px solid #ddd",
+            cursor: "pointer",
+            background: "#fff",
           }}
         >
           All
@@ -1312,22 +1325,18 @@ const App: React.FC = () => {
                 flexDirection: "column",
                 justifyContent: "space-between",
                 minHeight: 160,
+                overflow: "hidden",
+                boxSizing: "border-box",
+                transition: "box-shadow 0.18s, transform 0.15s",
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                {/* Logo + Name */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
                   {club.logo ? (
                     <img
                       src={club.logo}
                       alt={club.name}
-                      style={{
-                        width: 72,
-                        height: 72,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        flexShrink: 0,
-                      }}
+                      style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8 }}
                     />
                   ) : (
                     <div
@@ -1355,7 +1364,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* State badge + toggle */}
+                {/* Right side badge & button */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div
                     style={{
@@ -1372,17 +1381,10 @@ const App: React.FC = () => {
                     {club.state}
                   </div>
 
+                  {/* View Details Button */}
                   <button
                     onClick={() => toggleDetails(club.id)}
-                    style={{
-                      background: badgeColor,
-                      color: "#fff",
-                      padding: "6px 10px",
-                      border: "none",
-                      borderRadius: 8,
-                      cursor: "pointer",
-                      fontSize: 13,
-                    }}
+                    style={{ ...detailsButtonStyle, background: badgeColor, color: "#fff" }}
                     aria-expanded={expandedClubId === club.id}
                   >
                     {expandedClubId === club.id ? "Hide Details" : "View Details"}
@@ -1390,7 +1392,7 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Collapsible Details */}
+              {/* Details Section */}
               <div className={`club-details ${expandedClubId === club.id ? "expanded" : ""}`}>
                 {expandedClubId === club.id && (
                   <div>
@@ -1406,25 +1408,16 @@ const App: React.FC = () => {
                     <p>
                       <strong>Level:</strong> {club.level || "N/A"}
                     </p>
-
                     <p style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {club.telephone && (
-                        <a href={`tel:${club.telephone}`} style={{ color: "#0066cc" }}>
-                          📞 {club.telephone}
-                        </a>
-                      )}
-                      {club.email && (
-                        <a href={`mailto:${club.email}`} style={{ color: "#0066cc" }}>
-                          ✉️ {club.email}
-                        </a>
-                      )}
+                      {club.telephone && <a href={`tel:${club.telephone}`}>📞 {club.telephone}</a>}
+                      {club.email && <a href={`mailto:${club.email}`}>✉️ {club.email}</a>}
                       {club.facebook && (
-                        <a href={club.facebook} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
+                        <a href={club.facebook} target="_blank" rel="noreferrer">
                           👍 Facebook
                         </a>
                       )}
                       {club.website && (
-                        <a href={club.website} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
+                        <a href={club.website} target="_blank" rel="noreferrer">
                           🔗 Website
                         </a>
                       )}
