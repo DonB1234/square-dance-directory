@@ -1169,40 +1169,32 @@ const rawClubs: Club[] = [
   },
 ];
 
-/**
- * Dedupe clubs by id (keep first occurrence)
- */
-const clubs: Club[] = useMemo(() => {
-  const map = new Map<string, Club>();
-  for (const c of rawClubs) {
-    if (!map.has(c.id)) {
-      map.set(c.id, c);
-    }
-  }
-  return Array.from(map.values());
-}, [] as any) as Club[];
-
-/**
- * App component
- */
+/** App component */
 const App: React.FC = () => {
-  // selected state filter (null => all)
+  /** Selected state filter */
   const [selectedState, setSelectedState] = useState<string | null>(null);
 
-  // search term — search takes precedence when non-empty
+  /** Search term */
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // only one expanded club at a time — store id or null
+  /** Expanded club ID */
   const [expandedClubId, setExpandedClubId] = useState<string | null>(null);
 
-  // list of states used for buttons (ordered)
+  /** Dedupe clubs by ID */
+  const clubs: Club[] = useMemo(() => {
+    const map = new Map<string, Club>();
+    for (const c of rawClubs) {
+      if (!map.has(c.id)) {
+        map.set(c.id, c);
+      }
+    }
+    return Array.from(map.values());
+  }, []);
+
+  /** State filter buttons */
   const states = ["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD"];
 
-  // Filter logic:
-  // - If searchTerm is non-empty, ignore selectedState and show only clubs
-  //   whose name or city includes the searchTerm (case-insensitive).
-  // - Otherwise, if selectedState set, show clubs where club.state === selectedState.
-  // - Else show all clubs.
+  /** Filtered clubs based on search or state */
   const filteredClubs = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (term.length > 0) {
@@ -1214,19 +1206,19 @@ const App: React.FC = () => {
       );
     }
     if (selectedState) {
-      // Note: some clubs may have composite state strings like "NSW/ACT" in the data;
-      // match if selectedState is contained in the state field (simple and robust).
-      return clubs.filter((c) => c.state && c.state.toUpperCase().includes(selectedState));
+      return clubs.filter((c) =>
+        c.state && c.state.toUpperCase().includes(selectedState)
+      );
     }
     return clubs;
   }, [searchTerm, selectedState, clubs]);
 
-  // Toggle expand — ensure only one open at a time
+  /** Toggle details expand/collapse */
   const toggleDetails = (id: string) => {
     setExpandedClubId((prev) => (prev === id ? null : id));
   };
 
-  // UI helper: uniform button style (use NSW as standard sizing)
+  /** Base button style */
   const stateButtonStyleBase: React.CSSProperties = {
     minWidth: 92,
     height: 44,
@@ -1247,32 +1239,27 @@ const App: React.FC = () => {
       </div>
 
       {/* State Filter Buttons */}
-      <div
-        className="state-buttons"
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          marginBottom: 12,
-        }}
-      >
+      <div className="state-buttons">
         {states.map((st) => (
           <button
             key={st}
-            onClick={() => setSelectedState((prev) => (prev === st ? null : st))}
+            onClick={() =>
+              setSelectedState((prev) => (prev === st ? null : st))
+            }
             style={{
               ...stateButtonStyleBase,
-              borderColor: selectedState === st ? stateButtonBorders[st] || "#000" : stateButtonBorders[st] || "#ddd",
-              // simple highlight when active
-              boxShadow: selectedState === st ? `0 2px 8px rgba(0,0,0,0.12)` : "none",
-              // don't apply state color as bg — per your request no flags on buttons
+              borderColor:
+                selectedState === st
+                  ? stateButtonBorders[st] || "#000"
+                  : stateButtonBorders[st] || "#ddd",
+              boxShadow:
+                selectedState === st ? `0 2px 8px rgba(0,0,0,0.12)` : "none",
             }}
             aria-pressed={selectedState === st}
           >
             {st}
           </button>
         ))}
-        {/* "All" button */}
         <button
           onClick={() => setSelectedState(null)}
           style={{
@@ -1285,7 +1272,7 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Search Input */}
+      {/* Search */}
       <div style={{ marginBottom: 12 }}>
         <input
           type="text"
@@ -1293,7 +1280,6 @@ const App: React.FC = () => {
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            // collapse expanded club when search changes (makes UI clearer)
             setExpandedClubId(null);
           }}
           style={{
@@ -1308,7 +1294,7 @@ const App: React.FC = () => {
         />
       </div>
 
-      {/* Clubs Container */}
+      {/* Clubs */}
       <div
         className="clubs-container"
         style={{
@@ -1319,12 +1305,16 @@ const App: React.FC = () => {
         }}
       >
         {filteredClubs.length === 0 && (
-          <div style={{ padding: 12, color: "#666" }}>No clubs match your search / filter.</div>
+          <div style={{ padding: 12, color: "#666" }}>
+            No clubs match your search / filter.
+          </div>
         )}
 
         {filteredClubs.map((club) => {
           const badgeColor = stateColors[club.state] || "#999";
-          const borderColor = stateButtonBorders[club.state as keyof typeof stateButtonBorders] || "#ddd";
+          const borderColor =
+            stateButtonBorders[club.state as keyof typeof stateButtonBorders] ||
+            "#ddd";
 
           return (
             <div
@@ -1334,30 +1324,19 @@ const App: React.FC = () => {
                 border: `2px solid ${borderColor}`,
                 borderRadius: 12,
                 padding: 12,
-                margin: 0,
                 backgroundColor: "#fff",
                 boxShadow: "0 3px 6px rgba(0,0,0,0.06)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                // fixed height-ish to be taller and narrow on phones; cards won't grow width on expand
                 minHeight: 160,
                 overflow: "hidden",
                 boxSizing: "border-box",
                 transition: "box-shadow 0.18s, transform 0.15s",
               }}
-              // hover effects (desktop)
-              onMouseEnter={(e) => {
-                (e.currentTarget.style.transform = "translateY(-3px)");
-                (e.currentTarget.style.boxShadow = "0 8px 18px rgba(0,0,0,0.12)");
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget.style.transform = "translateY(0)");
-                (e.currentTarget.style.boxShadow = "0 3px 6px rgba(0,0,0,0.06)");
-              }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                {/* left side: logo (optional) and name */}
+                {/* Logo and name */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
                   {club.logo ? (
                     <img
@@ -1390,14 +1369,16 @@ const App: React.FC = () => {
                   )}
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h2 style={{ margin: 0, fontSize: 18, lineHeight: "1.05" }}>{club.name}</h2>
+                    <h2 style={{ margin: 0, fontSize: 18, lineHeight: "1.05" }}>
+                      {club.name}
+                    </h2>
                     <div style={{ fontSize: 13, color: "#555", marginTop: 6 }}>
                       {club.city} • {club.night}
                     </div>
                   </div>
                 </div>
 
-                {/* right side badge: state */}
+                {/* Badge and toggle */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div
                     style={{
@@ -1413,8 +1394,6 @@ const App: React.FC = () => {
                   >
                     {club.state}
                   </div>
-
-                  {/* view/hide toggle */}
                   <button
                     onClick={() => toggleDetails(club.id)}
                     style={{
@@ -1433,7 +1412,7 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* details area (collapsible) */}
+              {/* Details */}
               <div
                 className="club-details"
                 style={{
@@ -1441,7 +1420,6 @@ const App: React.FC = () => {
                   textAlign: "left",
                   fontSize: 14,
                   lineHeight: 1.35,
-                  // ensure details don't expand card width — wrap text
                   wordBreak: "break-word",
                   overflow: "hidden",
                   transition: "max-height 0.25s ease",
@@ -1449,40 +1427,41 @@ const App: React.FC = () => {
               >
                 {expandedClubId === club.id && (
                   <div>
-                    <p style={{ margin: "8px 0" }}>
+                    <p>
                       <strong>Location:</strong> {club.location || "N/A"}
                     </p>
-                    <p style={{ margin: "8px 0" }}>
+                    <p>
                       <strong>Caller/Cuer:</strong> {club.caller_cuer || "N/A"}
                     </p>
-                    <p style={{ margin: "8px 0" }}>
+                    <p>
                       <strong>Time:</strong> {club.time || "N/A"}
                     </p>
-                    <p style={{ margin: "8px 0" }}>
+                    <p>
                       <strong>Level:</strong> {club.level || "N/A"}
                     </p>
-
-                    <p style={{ margin: "8px 0", display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {club.telephone ? (
-                        <a href={`tel:${club.telephone}`} style={{ color: "#0066cc" }}>
-                          📞 {club.telephone}
-                        </a>
-                      ) : null}
-                      {club.email ? (
-                        <a href={`mailto:${club.email}`} style={{ color: "#0066cc" }}>
-                          ✉️ {club.email}
-                        </a>
-                      ) : null}
+                    <p>
+                      <strong>Contact:</strong> {club.telephone || "N/A"} |{" "}
+                      {club.email || "N/A"}
+                    </p>
+                    <p>
+                      <strong>Facebook:</strong>{" "}
                       {club.facebook ? (
-                        <a href={club.facebook} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
-                          👍 Facebook
+                        <a href={club.facebook} target="_blank" rel="noopener noreferrer">
+                          {club.facebook}
                         </a>
-                      ) : null}
+                      ) : (
+                        "N/A"
+                      )}
+                    </p>
+                    <p>
+                      <strong>Website:</strong>{" "}
                       {club.website ? (
-                        <a href={club.website} target="_blank" rel="noreferrer" style={{ color: "#0066cc" }}>
-                          🔗 Website
+                        <a href={club.website} target="_blank" rel="noopener noreferrer">
+                          {club.website}
                         </a>
-                      ) : null}
+                      ) : (
+                        "N/A"
+                      )}
                     </p>
                   </div>
                 )}
