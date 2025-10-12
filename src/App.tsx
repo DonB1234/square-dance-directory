@@ -1208,8 +1208,9 @@ const App: React.FC = () => {
         © Don Barba 2025
       </div>
 
- {/* --- STATE BUTTONS (3-3-2, uniform size, responsive) --- */}
+ {/* --- STATE BUTTONS (3-3-2, uniform size) --- */}
 <div className="state-buttons-container">
+
   {/* Row 1: WA, SA, NSW */}
   <div className="state-buttons-row">
     {["WA", "SA", "NSW"].map((st) => {
@@ -1217,10 +1218,8 @@ const App: React.FC = () => {
       return (
         <button
           key={st}
+          onClick={() => setSelectedState(selectedState === st ? null : st)}
           className={`state-btn ${isActive ? "active" : ""}`}
-          onClick={() =>
-            setSelectedState(selectedState === st ? null : st)
-          }
           style={{ backgroundColor: stateColors[st] }}
         >
           {st}
@@ -1236,10 +1235,8 @@ const App: React.FC = () => {
       return (
         <button
           key={st}
+          onClick={() => setSelectedState(selectedState === st ? null : st)}
           className={`state-btn ${isActive ? "active" : ""}`}
-          onClick={() =>
-            setSelectedState(selectedState === st ? null : st)
-          }
           style={{ backgroundColor: stateColors[st] }}
         >
           {st}
@@ -1257,10 +1254,8 @@ const App: React.FC = () => {
       return (
         <button
           key={st}
+          onClick={() => setSelectedState(isAll ? null : selectedState === st ? null : st)}
           className={`state-btn ${isActive ? "active" : ""}`}
-          onClick={() =>
-            setSelectedState(isAll ? null : selectedState === st ? null : st)
-          }
           style={{ backgroundColor: bgColor }}
         >
           {st}
@@ -1268,7 +1263,9 @@ const App: React.FC = () => {
       );
     })}
   </div>
+
 </div>
+
 
 
       {/* --- SEARCH INPUT --- */}
