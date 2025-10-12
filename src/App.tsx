@@ -1261,7 +1261,7 @@ const App: React.FC = () => {
           key={st}
           onClick={() => setSelectedState(selectedState === st ? null : st)}
           style={{
-            width: 100,
+            width: 80,
             height: 36,
             fontSize: 14,
             fontWeight: 600,
