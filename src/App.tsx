@@ -1222,45 +1222,93 @@ const App: React.FC = () => {
         © Don Barba 2025
       </div>
 
-      {/* --- STATE BUTTONS --- */}
-      <div className="state-buttons">
-        {["WA", "SA", "NSW", "TAS", "ACT", "VIC", "QLD", "All"].map(
-          (st, idx) => {
-            const isAll = st === "All";
-            const isActive = isAll ? selectedState === null : selectedState === st;
-            const baseColor = isAll ? "#666" : stateColors[st] || "#ccc";
+     {/* --- STATE BUTTONS (3-3-2, uniform size) --- */}
+<div className="state-buttons" style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+  
+  {/* Row 1: WA, SA, NSW */}
+  <div style={{ display: "flex", gap: 8 }}>
+    {["WA", "SA", "NSW"].map((st) => {
+      const isActive = selectedState === st;
+      return (
+        <button
+          key={st}
+          onClick={() => setSelectedState(selectedState === st ? null : st)}
+          style={{
+            width: 100,
+            height: 36,
+            fontSize: 14,
+            fontWeight: 600,
+            borderRadius: 6,
+            border: "2px solid #000",
+            backgroundColor: stateColors[st],
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
+          }}
+        >
+          {st}
+        </button>
+      );
+    })}
+  </div>
 
-            return (
-              <button
-                key={st}
-                onClick={() => {
-                  if (isAll) setSelectedState(null);
-                  else setSelectedState((prev) => (prev === st ? null : st));
-                }}
-                style={{
-                  height: 38,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  borderRadius: 6,
-                  border: `2px solid ${stateButtonBorders[st] || "#ddd"}`,
-                  background: baseColor,
-                  color: "#fff",
-                  boxShadow: isActive
-                    ? "0 2px 8px rgba(0,0,0,0.25)"
-                    : "0 1px 3px rgba(0,0,0,0.12)",
-                  transform: isActive ? "scale(1.05)" : "scale(1)",
-                  transition: "all 0.2s ease",
-                }}
-                aria-pressed={isActive}
-                onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(110%)")}
-                onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
-              >
-                {st}
-              </button>
-            );
-          }
-        )}
-      </div>
+  {/* Row 2: TAS, ACT, VIC */}
+  <div style={{ display: "flex", gap: 8 }}>
+    {["TAS", "ACT", "VIC"].map((st) => {
+      const isActive = selectedState === st;
+      return (
+        <button
+          key={st}
+          onClick={() => setSelectedState(selectedState === st ? null : st)}
+          style={{
+            width: 100,
+            height: 36,
+            fontSize: 14,
+            fontWeight: 600,
+            borderRadius: 6,
+            border: "2px solid #000",
+            backgroundColor: stateColors[st],
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
+          }}
+        >
+          {st}
+        </button>
+      );
+    })}
+  </div>
+
+  {/* Row 3: QLD, All */}
+  <div style={{ display: "flex", gap: 8 }}>
+    {["QLD", "All"].map((st) => {
+      const isAll = st === "All";
+      const isActive = isAll ? selectedState === null : selectedState === st;
+      const bgColor = isAll ? "#666" : stateColors[st];
+      return (
+        <button
+          key={st}
+          onClick={() => setSelectedState(isAll ? null : selectedState === st ? null : st)}
+          style={{
+            width: 100,
+            height: 36,
+            fontSize: 14,
+            fontWeight: 600,
+            borderRadius: 6,
+            border: "2px solid #000",
+            backgroundColor: bgColor,
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
+          }}
+        >
+          {st}
+        </button>
+      );
+    })}
+  </div>
+
+</div>
 
       {/* --- SEARCH INPUT --- */}
       <div style={{ marginBottom: 12 }}>
