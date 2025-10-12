@@ -1,223 +1,435 @@
-import React, { useState } from "react";
-import "./App.css";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Club {
+  id: string;
   name: string;
-  state: string;
   city: string;
-  caller: string;
-  day: string;
+  state: string;
+  location: string;
+  night: string;
+  caller_cuer?: string;
   time: string;
-  venue: string;
-  contact: string;
-  borderColor: string;
+  level: string;
+  telephone: string;
+  email: string;
+  facebook: string;
+  website: string;
   logo?: string;
+  borderColor: string;
 }
 
 const clubs: Club[] = [
   {
-    name: "Kerr-Ly-Qs Square Dance Club",
-    state: "WA",
-    city: "Perth",
-    caller: "Allen",
-    day: "Tuesday",
-    time: "7:30 PM - 10:00 PM",
-    venue: "Community Hall",
-    contact: "Allen: 0459 250 143 / Alannah: 04350 175 571",
+    id: "vic1",
+    name: "Melbourne Squares",
+    city: "Melbourne",
+    state: "VIC",
+    location: "Community Hall, Melbourne",
+    night: "Tuesday",
+    caller_cuer: "John Doe",
+    time: "7-9pm",
+    level: "Beginner/Intermediate",
+    telephone: "0411 234 567",
+    email: "melbsquares@example.com",
+    facebook: "https://facebook.com/melbsquares",
+    website: "https://melbsquares.com.au",
     borderColor: "#FF5733",
     logo: "",
   },
   {
-    name: "Melbourne Movers",
-    state: "VIC",
-    city: "Melbourne",
-    caller: "Sarah",
-    day: "Thursday",
-    time: "6:30 PM - 9:30 PM",
-    venue: "Town Hall",
-    contact: "sarah@example.com",
-    borderColor: "#33B5FF",
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
   },
-  // Add other clubs here...
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
+  {
+    id: "nsw1",
+    name: "Sydney Swings",
+    city: "Sydney",
+    state: "NSW",
+    location: "Sydney Dance Hall",
+    night: "Wednesday",
+    caller_cuer: "Jane Smith",
+    time: "6-8pm",
+    level: "All Levels",
+    telephone: "0422 345 678",
+    email: "sydneyswings@example.com",
+    facebook: "https://facebook.com/sydneyswings",
+    website: "https://sydneyswings.com.au",
+    borderColor: "#33C3FF",
+    logo: "",
+  },
 ];
 
-const stateGradients: { [key: string]: string } = {
-  WA: "linear-gradient(135deg, #e0f7fa, #b2ebf2)",
-  SA: "linear-gradient(135deg, #fff3e0, #ffe0b2)",
-  QLD: "linear-gradient(135deg, #e8f5e9, #c8e6c9)",
-  VIC: "linear-gradient(135deg, #f3e5f5, #e1bee7)",
-  TAS: "linear-gradient(135deg, #fffde7, #fff9c4)",
-  NSW: "linear-gradient(135deg, #fbe9e7, #ffccbc)",
-  ACT: "linear-gradient(135deg, #e0f2f1, #b2dfdb)",
-  ALL: "linear-gradient(135deg, #eceff1, #cfd8dc)",
-};
-
-const states = ["WA", "SA", "QLD", "VIC", "TAS", "NSW", "ACT", "ALL"];
+const stateButtons = [
+  { name: "WA", bgColor: "#0078D7", borderColor: "#005A9E" },
+  { name: "SA", bgColor: "#FFB900", borderColor: "#CC8B00" },
+  { name: "QLD", bgColor: "#33FF57", borderColor: "#28A745" },
+  { name: "VIC", bgColor: "#FF5733", borderColor: "#C43C1C" },
+  { name: "TAS", bgColor: "#8E44AD", borderColor: "#6C3483" },
+  { name: "NSW", bgColor: "#33C3FF", borderColor: "#1A9EDC" },
+  { name: "ACT", bgColor: "#F39C12", borderColor: "#D68910" },
+  { name: "ALL", bgColor: "#CCCCCC", borderColor: "#999999" },
+];
 
 const App: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [search, setSearch] = useState("");
+  const [expandedClubs, setExpandedClubs] = useState<{ [key: string]: boolean }>({});
   const [selectedState, setSelectedState] = useState("ALL");
-  const [openDetails, setOpenDetails] = useState<number | null>(null);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleStateClick = (state: string) => {
-    setSelectedState(state);
-  };
-
-  const toggleDetails = (index: number) => {
-    setOpenDetails(openDetails === index ? null : index);
+  const toggleExpand = (id: string) => {
+    setExpandedClubs((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const filteredClubs = clubs.filter((club) => {
-    const matchesState = selectedState === "ALL" || club.state === selectedState;
     const matchesSearch =
-      club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.caller.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.day.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      club.time.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesState && matchesSearch;
+      club.name.toLowerCase().includes(search.toLowerCase()) ||
+      club.city.toLowerCase().includes(search.toLowerCase()) ||
+      club.night.toLowerCase().includes(search.toLowerCase()) ||
+      (club.caller_cuer && club.caller_cuer.toLowerCase().includes(search.toLowerCase())) ||
+      club.time.toLowerCase().includes(search.toLowerCase());
+    const matchesState = selectedState === "ALL" || club.state === selectedState;
+    return matchesSearch && matchesState;
   });
 
+  const clubsByState: { [state: string]: Club[] } = {};
+  filteredClubs.forEach((club) => {
+    if (!clubsByState[club.state]) clubsByState[club.state] = [];
+    clubsByState[club.state].push(club);
+  });
+
+  const stateButtonRows = [
+    stateButtons.slice(0, 3),
+    stateButtons.slice(3, 6),
+    stateButtons.slice(6, 8),
+  ];
+
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Australian Square Dance Clubs</h1>
       <p>© Don Barba 2025</p>
 
       {/* State Buttons */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "10px",
-          marginBottom: "20px",
-        }}
-      >
-        {states.map((state) => (
-          <button
-            key={state}
-            onClick={() => handleStateClick(state)}
-            style={{
-              padding: "10px",
-              borderRadius: "5px",
-              backgroundColor: selectedState === state ? "#1976d2" : "#eee",
-              color: selectedState === state ? "#fff" : "#000",
-              border: "1px solid #ccc",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            {state}
-          </button>
-        ))}
-      </div>
+      {stateButtonRows.map((row, idx) => (
+        <div
+          key={idx}
+          style={{ display: "flex", justifyContent: "center", marginBottom: "10px", gap: "10px", flexWrap: "wrap" }}
+        >
+          {row.map((state) => (
+            <button
+              key={state.name}
+              style={{
+                backgroundColor: state.bgColor,
+                border: `2px solid ${state.borderColor}`,
+                color: "#fff",
+                padding: "10px 20px",
+                cursor: "pointer",
+                borderRadius: "5px",
+              }}
+              onClick={() => setSelectedState(state.name)}
+            >
+              {state.name}
+            </button>
+          ))}
+        </div>
+      ))}
 
       {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="Search by state, day, caller, city or time..."
-        value={searchTerm}
-        onChange={handleSearchChange}
+      <div style={{ textAlign: "center", margin: "20px 0" }}>
+        <input
+          type="text"
+          placeholder="Search by state, night, caller/cuer, city, club or time..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "80%",
+            padding: "10px",
+            fontSize: "16px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
+
+      {/* Clubs Grouped by State */}
+      {Object.keys(clubsByState).map((state) => (
+        <div key={state} style={{ marginBottom: "40px" }}>
+          <h2 style={{ borderBottom: "2px solid #ccc", paddingBottom: "5px" }}>{state}</h2>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "20px",
+              marginTop: "10px",
+            }}
+          >
+            {clubsByState[state].map((club) => (
+              <AnimatedClubCard key={club.id} club={club} isExpanded={!!expandedClubs[club.id]} toggleExpand={toggleExpand} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface ClubCardProps {
+  club: Club;
+  isExpanded: boolean;
+  toggleExpand: (id: string) => void;
+}
+
+const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExpand }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isExpanded ? contentRef.current.scrollHeight : 0);
+    }
+  }, [isExpanded]);
+
+  return (
+    <div
+      style={{
+        border: `4px solid ${club.borderColor}`,
+        borderRadius: "10px",
+        padding: "15px",
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        wordWrap: "break-word",
+        minHeight: "250px",
+        position: "relative",
+        transition: "all 0.3s ease",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h3 style={{ marginBottom: "10px", fontSize: "18px", flex: 1 }}>{club.name}</h3>
+        {club.logo && (
+          <button
+            style={{
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+              border: "none",
+              backgroundColor: club.borderColor,
+              color: "#fff",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              textAlign: "center",
+              lineHeight: "30px",
+            }}
+            onClick={() => window.open(club.website || "#", "_blank")}
+          >
+            🔹
+          </button>
+        )}
+      </div>
+
+      <button
         style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "20px",
+          marginBottom: "10px",
+          padding: "8px 12px",
           borderRadius: "5px",
-          border: "1px solid #ccc",
+          border: "none",
+          backgroundColor: club.borderColor,
+          color: "#fff",
+          cursor: "pointer",
+          fontSize: "14px",
         }}
-      />
+        onClick={() => toggleExpand(club.id)}
+      >
+        {isExpanded ? "Hide Details" : "View Details"}
+      </button>
 
-      {/* Clubs Section */}
-      {states
-        .filter((state) => state !== "ALL")
-        .map((state) => {
-          const clubsInState = filteredClubs.filter(
-            (club) => club.state === state
-          );
-          if (clubsInState.length === 0) return null;
-
-          return (
-            <div
-              key={state}
-              style={{
-                background: stateGradients[state],
-                padding: "15px",
-                borderRadius: "10px",
-                marginBottom: "20px",
-              }}
-            >
-              <h2>{state}</h2>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                  gap: "15px",
-                }}
-              >
-                {clubsInState.map((club, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      border: `2px solid ${club.borderColor}`,
-                      borderRadius: "10px",
-                      padding: "10px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "auto",
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    {club.logo && (
-                      <img
-                        src={club.logo}
-                        alt={`${club.name} logo`}
-                        style={{ width: "100%", borderRadius: "5px", marginBottom: "10px" }}
-                      />
-                    )}
-                    <h3>{club.name}</h3>
-                    <p>
-                      {club.city} | {club.day} | {club.time}
-                    </p>
-                    <button
-                      onClick={() => toggleDetails(index)}
-                      style={{
-                        marginTop: "10px",
-                        padding: "8px",
-                        borderRadius: "5px",
-                        border: "none",
-                        backgroundColor: club.borderColor,
-                        color: "#fff",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {openDetails === index ? "Hide Details" : "View Details"}
-                    </button>
-
-                    {openDetails === index && (
-                      <div style={{ marginTop: "10px" }}>
-                        <p>
-                          <strong>Caller:</strong> {club.caller}
-                        </p>
-                        <p>
-                          <strong>Venue:</strong> {club.venue}
-                        </p>
-                        <p>
-                          <strong>Contact:</strong> {club.contact}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+      <div
+        ref={contentRef}
+        style={{
+          overflow: "hidden",
+          maxHeight: `${height}px`,
+          transition: "max-height 0.5s ease",
+          fontSize: "14px",
+        }}
+      >
+        <p><strong>State:</strong> {club.state}</p>
+        <p><strong>City:</strong> {club.city}</p>
+        <p><strong>Location:</strong> {club.location}</p>
+        <p><strong>Night:</strong> {club.night}</p>
+        {club.caller_cuer && <p><strong>Caller/Cuer:</strong> {club.caller_cuer}</p>}
+        <p><strong>Time:</strong> {club.time}</p>
+        <p><strong>Level:</strong> {club.level}</p>
+        <p><strong>Telephone:</strong> {club.telephone}</p>
+        <p><strong>Email:</strong> <a href={`mailto:${club.email}`}>{club.email}</a></p>
+        <p><strong>Facebook:</strong> <a href={club.facebook} target="_blank" rel="noopener noreferrer">{club.facebook}</a></p>
+        <p><strong>Website:</strong> <a href={club.website} target="_blank" rel="noopener noreferrer">{club.website}</a></p>
+      </div>
     </div>
   );
 };
