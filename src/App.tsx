@@ -18,39 +18,57 @@ interface Club {
   borderColor: string;
 }
 
-// --- SAMPLE DATA ---
 const clubs: Club[] = [
   {
-    id: "vic1",
-    name: "Melbourne Squares",
-    city: "Melbourne",
-    state: "VIC",
-    location: "Community Hall, Melbourne",
+    id: "wa1",
+    name: "Kerr-Ly-Qs",
+    city: "Perth",
+    state: "WA",
+    location: "Community Hall, Perth",
     night: "Tuesday",
-    caller_cuer: "John Doe",
+    caller_cuer: "Allen",
     time: "7-9pm",
     level: "Beginner/Intermediate",
-    telephone: "0411 234 567",
-    email: "melbsquares@example.com",
-    facebook: "https://facebook.com/melbsquares",
-    website: "https://melbsquares.com.au",
-    borderColor: "#001F7E",
+    telephone: "0459 250 143",
+    email: "Kerr.Ly.Qs@gmail.com",
+    facebook: "https://facebook.com/kerrlyqs",
+    website: "https://kerrlyqs.com.au",
+    borderColor: "#F5C45C",
+    logo: "",
   },
   {
-    id: "nsw1",
-    name: "Sydney Swings",
-    city: "Sydney",
-    state: "NSW",
-    location: "Sydney Dance Hall",
-    night: "Wednesday",
-    caller_cuer: "Jane Smith",
-    time: "6-8pm",
+    id: "wa2",
+    name: "Kiwilers",
+    city: "Perth",
+    state: "WA",
+    location: "Kiwi Hall, Perth",
+    night: "Thursday",
+    caller_cuer: "Alannah",
+    time: "7-9pm",
     level: "All Levels",
-    telephone: "0422 345 678",
-    email: "sydneyswings@example.com",
-    facebook: "https://facebook.com/sydneyswings",
-    website: "https://sydneyswings.com.au",
-    borderColor: "#CBEDFD",
+    telephone: "04350 175 571",
+    email: "kiwilers@example.com",
+    facebook: "https://facebook.com/kiwilers",
+    website: "https://kiwilers.com.au",
+    borderColor: "#F5C45C",
+    logo: "",
+  },
+  {
+    id: "sa1",
+    name: "Swan Valley Squares",
+    city: "Adelaide",
+    state: "SA",
+    location: "Swan Hall, Adelaide",
+    night: "Wednesday",
+    caller_cuer: "Mark",
+    time: "7-9pm",
+    level: "Beginner",
+    telephone: "0400 111 222",
+    email: "swanvalley@example.com",
+    facebook: "https://facebook.com/swanvalleysquares",
+    website: "https://swanvalleysquares.com.au",
+    borderColor: "#ED174C",
+    logo: "",
   },
 ];
 
@@ -66,13 +84,13 @@ const stateButtonColors: { [key: string]: string } = {
 };
 
 const stateButtonBorders: { [key: string]: string } = {
-  WA: "#000000", // black
-  SA: "#E17000", // gold
-  VIC: "#C0C0C0", // silver
-  NSW: "#FF0000", // red
-  QLD: "#00008B", // blue
-  ACT: "#012B88", // resolution blue
-  TAS: "#006A4E", // bottle green
+  WA: "#000000",
+  SA: "#E17000",
+  VIC: "#C0C0C0",
+  NSW: "#FF0000",
+  QLD: "#00008B",
+  ACT: "#012B88",
+  TAS: "#006A4E",
   ALL: "#000000",
 };
 
@@ -87,65 +105,69 @@ const App: React.FC = () => {
     setExpandedClubs((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Filter logic
   const filteredClubs = clubs.filter((club) => {
-    const searchTerm = search.toLowerCase();
     const matchesSearch =
-      club.name.toLowerCase().includes(searchTerm) ||
-      club.city.toLowerCase().includes(searchTerm) ||
-      club.state.toLowerCase().includes(searchTerm) ||
-      club.night.toLowerCase().includes(searchTerm) ||
-      (club.caller_cuer && club.caller_cuer.toLowerCase().includes(searchTerm)) ||
-      club.time.toLowerCase().includes(searchTerm);
+      club.name.toLowerCase().includes(search.toLowerCase()) ||
+      club.city.toLowerCase().includes(search.toLowerCase()) ||
+      club.state.toLowerCase().includes(search.toLowerCase()) ||
+      club.night.toLowerCase().includes(search.toLowerCase()) ||
+      (club.caller_cuer && club.caller_cuer.toLowerCase().includes(search.toLowerCase())) ||
+      club.time.toLowerCase().includes(search.toLowerCase());
     const matchesState = selectedState === "ALL" || club.state === selectedState;
     return matchesSearch && matchesState;
   });
 
+  const clubsByState: { [state: string]: Club[] } = {};
+  filteredClubs.forEach((club) => {
+    if (!clubsByState[club.state]) clubsByState[club.state] = [];
+    clubsByState[club.state].push(club);
+  });
+
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", textAlign: "center" }}>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Australian Square Dance Clubs</h1>
       <p>© Don Barba 2025</p>
 
-      {/* --- State Buttons with Glow --- */}
+      {/* State Buttons */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "12px",
-          justifyItems: "center",
-          maxWidth: "400px",
-          margin: "0 auto 20px auto",
+          gap: "10px",
+          justifyContent: "center",
+          marginBottom: "20px",
+          maxWidth: "360px",
+          margin: "0 auto 20px",
         }}
       >
-        {stateButtons.map((state) => (
-          <button
-            key={state}
-            style={{
-              backgroundColor: stateButtonColors[state],
-              border: `3px solid ${stateButtonBorders[state]}`,
-              color: state === "NSW" ? "#000" : "#fff",
-              padding: "10px 0",
-              width: "100px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: "14px",
-              boxShadow:
-                selectedState === state
-                  ? `0 0 12px 3px ${stateButtonColors[state]}`
-                  : "none",
-              transform: selectedState === state ? "scale(1.05)" : "scale(1)",
-              transition: "all 0.3s ease",
-            }}
-            onClick={() => setSelectedState(state)}
-          >
-            {state}
-          </button>
-        ))}
+        {stateButtons.map((state) => {
+          let colSpan = state === "ALL" ? 2 : 1; // last row has 2 columns
+          return (
+            <button
+              key={state}
+              style={{
+                gridColumn: `span ${colSpan}`,
+                backgroundColor: stateButtonColors[state],
+                border: `2px solid ${stateButtonBorders[state]}`,
+                color: "#fff",
+                padding: "10px",
+                cursor: "pointer",
+                borderRadius: "5px",
+                fontWeight: "bold",
+                textAlign: "center",
+                transition: "all 0.3s",
+                boxShadow: selectedState === state ? "0 0 8px 2px #fff" : "none",
+              }}
+              onClick={() => setSelectedState(state)}
+            >
+              {state}
+            </button>
+          );
+        })}
       </div>
 
-      {/* --- Search Bar --- */}
-      <div style={{ margin: "20px 0" }}>
+      {/* Search Bar */}
+      <div style={{ textAlign: "center", margin: "20px 0" }}>
         <input
           type="text"
           placeholder="Search by club, city, state, night, caller, or time..."
@@ -161,28 +183,26 @@ const App: React.FC = () => {
         />
       </div>
 
-      {/* --- Club Cards --- */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "20px",
-          marginTop: "10px",
-        }}
-      >
-        {filteredClubs.map((club) => (
-          <AnimatedClubCard
-            key={club.id}
-            club={club}
-            isExpanded={!!expandedClubs[club.id]}
-            toggleExpand={toggleExpand}
-          />
+      {/* Clubs Grouped by State */}
+      <div>
+        {Object.keys(clubsByState).map((state) => (
+          <div key={state} style={{ marginBottom: "40px" }}>
+            <h2 style={{ borderBottom: "2px solid #ccc", paddingBottom: "5px", textAlign: "center" }}>{state}</h2>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: "20px",
+                marginTop: "10px",
+              }}
+            >
+              {clubsByState[state].map((club) => (
+                <ClubCard key={club.id} club={club} isExpanded={!!expandedClubs[club.id]} toggleExpand={toggleExpand} />
+              ))}
+            </div>
+          </div>
         ))}
-
-        {filteredClubs.length === 0 && (
-          <p style={{ fontStyle: "italic", color: "#666" }}>No clubs found.</p>
-        )}
       </div>
     </div>
   );
@@ -194,7 +214,7 @@ interface ClubCardProps {
   toggleExpand: (id: string) => void;
 }
 
-const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExpand }) => {
+const ClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExpand }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
@@ -211,15 +231,16 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
         borderRadius: "10px",
         padding: "15px",
         backgroundColor: "#fff",
-        width: "300px",
+        minWidth: "280px",
+        maxWidth: "320px",
+        flex: "1 1 300px",
         display: "flex",
         flexDirection: "column",
-        alignItems: "stretch",
+        wordWrap: "break-word",
         transition: "all 0.3s ease",
         position: "relative",
       }}
     >
-      {/* --- Club Header --- */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h3 style={{ marginBottom: "10px", fontSize: "18px", flex: 1 }}>{club.name}</h3>
         <button
@@ -232,16 +253,17 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
             color: "#fff",
             cursor: "pointer",
             fontSize: "18px",
+            fontWeight: "bold",
+            textAlign: "center",
             lineHeight: "52px",
+            transition: "all 0.2s ease",
           }}
           onClick={() => window.open(club.website || "#", "_blank")}
-          title="Visit Website"
         >
-          🔗
+          🔹
         </button>
       </div>
 
-      {/* --- View Details Button --- */}
       <button
         style={{
           marginBottom: "10px",
@@ -258,7 +280,6 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
         {isExpanded ? "Hide Details" : "View Details"}
       </button>
 
-      {/* --- Expandable Details --- */}
       <div
         ref={contentRef}
         style={{
@@ -266,7 +287,6 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
           maxHeight: `${height}px`,
           transition: "max-height 0.5s ease",
           fontSize: "14px",
-          textAlign: "left",
         }}
       >
         <p><strong>State:</strong> {club.state}</p>
@@ -277,24 +297,9 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
         <p><strong>Time:</strong> {club.time}</p>
         <p><strong>Level:</strong> {club.level}</p>
         <p><strong>Telephone:</strong> {club.telephone}</p>
-        <p>
-          <strong>Email:</strong>{" "}
-          <a href={`mailto:${club.email}`} style={{ color: club.borderColor }}>
-            {club.email}
-          </a>
-        </p>
-        <p>
-          <strong>Facebook:</strong>{" "}
-          <a href={club.facebook} target="_blank" rel="noopener noreferrer" style={{ color: club.borderColor }}>
-            {club.facebook}
-          </a>
-        </p>
-        <p>
-          <strong>Website:</strong>{" "}
-          <a href={club.website} target="_blank" rel="noopener noreferrer" style={{ color: club.borderColor }}>
-            {club.website}
-          </a>
-        </p>
+        <p><strong>Email:</strong> <a href={`mailto:${club.email}`}>{club.email}</a></p>
+        <p><strong>Facebook:</strong> <a href={club.facebook} target="_blank" rel="noopener noreferrer">{club.facebook}</a></p>
+        <p><strong>Website:</strong> <a href={club.website} target="_blank" rel="noopener noreferrer">{club.website}</a></p>
       </div>
     </div>
   );
