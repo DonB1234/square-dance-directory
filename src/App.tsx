@@ -53,57 +53,37 @@ const clubs: Club[] = [
     borderColor: "#CBEDFD",
     logo: "",
   },
-  {
-    id: "wa1",
-    name: "Swan Valley Squares",
-    city: "Sydney",
-    state: "WA",
-    location: "Sydney Dance Hall",
-    night: "Friday",
-    caller_cuer: "Greg Fawell",
-    time: "7:30-9:30pm",
-    level: "MAinstream",
-    telephone: "0422 345 678",
-    email: "sydneyswings@example.com",
-    facebook: "https://facebook.com/sydneyswings",
-    website: "https://sydneyswings.com.au",
-    borderColor: "#F5C45C",
-    logo: "",
-  },
-  {
-    id: "wa2",
-    name: "Swan Valley Squares",
-    city: "Sydney",
-    state: "WA",
-    location: "Sydney Dance Hall",
-    night: "Friday",
-    caller_cuer: "Greg Fawell",
-    time: "7:30-9:30pm",
-    level: "MAinstream",
-    telephone: "0422 345 678",
-    email: "sydneyswings@example.com",
-    facebook: "https://facebook.com/sydneyswings",
-    website: "https://sydneyswings.com.au",
-    borderColor: "#F5C45C",
-    logo: "",
-  },
 ];
 
-const stateButtons = [
-  { name: "WA", bgColor: "#F5C45C", borderColor: "#F5C45C" },
-  { name: "SA", bgColor: "#ED174C", borderColor: "#ED174C" },
-  { name: "QLD", bgColor: "#7D0096", borderColor: "#7D0096" },
-  { name: "VIC", bgColor: "#001F7E", borderColor: "#001F7E" },
-  { name: "TAS", bgColor: "#A10035", borderColor: "#A10035" },
-  { name: "NSW", bgColor: "#CBEDFD", borderColor: "#CBEDFD" },
-  { name: "ACT", bgColor: "#FFCE00", borderColor: "#FFCE00" },
-  { name: "ALL", bgColor: "#808080", borderColor: "#808080" },
-];
+const stateButtonColors: { [key: string]: string } = {
+  WA: "#F5C45C",
+  SA: "#ED174C",
+  NSW: "#CBEDFD",
+  TAS: "#A10035",
+  ACT: "#FFCE00",
+  VIC: "#001F7E",
+  QLD: "#7D0096",
+  ALL: "#808080",
+};
+
+const stateButtonBorders: { [key: string]: string } = {
+  WA: "#000000", // black
+  SA: "#E17000", // gold
+  VIC: "#C0C0C0", // silver
+  NSW: "#FF0000", // red
+  QLD: "#00008B", // blue
+  ACT: "#012B88", // resolution blue
+  TAS: "#006A4E", // bottle green
+  ALL: "#000000",
+};
+
+const stateButtons = Object.keys(stateButtonColors);
 
 const App: React.FC = () => {
   const [search, setSearch] = useState("");
   const [expandedClubs, setExpandedClubs] = useState<{ [key: string]: boolean }>({});
   const [selectedState, setSelectedState] = useState("ALL");
+  const [fadeKey, setFadeKey] = useState(0);
 
   const toggleExpand = (id: string) => {
     setExpandedClubs((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -120,17 +100,16 @@ const App: React.FC = () => {
     return matchesSearch && matchesState;
   });
 
+  useEffect(() => {
+    // trigger re-render to activate fade animation
+    setFadeKey((prev) => prev + 1);
+  }, [filteredClubs]);
+
   const clubsByState: { [state: string]: Club[] } = {};
   filteredClubs.forEach((club) => {
     if (!clubsByState[club.state]) clubsByState[club.state] = [];
     clubsByState[club.state].push(club);
   });
-
-  const stateButtonRows = [
-    stateButtons.slice(0, 3),
-    stateButtons.slice(3, 6),
-    stateButtons.slice(6, 8),
-  ];
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
@@ -138,31 +117,37 @@ const App: React.FC = () => {
       <p>© Don Barba 2025</p>
 
       {/* State Buttons */}
-      {stateButtonRows.map((row, idx) => (
-        <div
-          key={idx}
-          style={{ display: "flex", justifyContent: "center", marginBottom: "10px", gap: "10px", flexWrap: "wrap" }}
-        >
-          {row.map((state) => (
-            <button
-              key={state.name}
-              style={{
-                backgroundColor: state.bgColor,
-                border: `2px solid ${state.borderColor}`,
-                color: state.name === "NSW" ? "#000" : "#fff",
-                padding: "12px 30px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                minWidth: "100px",
-                fontWeight: "bold",
-              }}
-              onClick={() => setSelectedState(state.name)}
-            >
-              {state.name}
-            </button>
-          ))}
-        </div>
-      ))}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "10px",
+          marginBottom: "20px",
+        }}
+      >
+        {stateButtons.map((state) => (
+          <button
+            key={state}
+            style={{
+              backgroundColor: stateButtonColors[state],
+              border: `2px solid ${stateButtonBorders[state]}`,
+              color: state === "NSW" ? "#000" : "#fff",
+              padding: "10px 15px",
+              cursor: "pointer",
+              borderRadius: "5px",
+              flex: "1 0 28%",
+              maxWidth: "110px",
+              fontWeight: "bold",
+              textAlign: "center",
+              transition: "transform 0.2s",
+            }}
+            onClick={() => setSelectedState(state)}
+          >
+            {state}
+          </button>
+        ))}
+      </div>
 
       {/* Search Bar */}
       <div style={{ textAlign: "center", margin: "20px 0" }}>
@@ -181,24 +166,26 @@ const App: React.FC = () => {
         />
       </div>
 
-      {/* Clubs Grouped by State */}
-      {Object.keys(clubsByState).map((state) => (
-        <div key={state} style={{ marginBottom: "40px" }}>
-          <h2 style={{ borderBottom: "2px solid #ccc", paddingBottom: "5px" }}>{state}</h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "20px",
-              marginTop: "10px",
-            }}
-          >
-            {clubsByState[state].map((club) => (
-              <AnimatedClubCard key={club.id} club={club} isExpanded={!!expandedClubs[club.id]} toggleExpand={toggleExpand} />
-            ))}
+      {/* Clubs Grouped by State with fade animation */}
+      <div key={fadeKey} style={{ transition: "opacity 0.5s", opacity: 1 }}>
+        {Object.keys(clubsByState).map((state) => (
+          <div key={state} style={{ marginBottom: "40px" }}>
+            <h2 style={{ borderBottom: "2px solid #ccc", paddingBottom: "5px" }}>{state}</h2>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "20px",
+                marginTop: "10px",
+              }}
+            >
+              {clubsByState[state].map((club) => (
+                <AnimatedClubCard key={club.id} club={club} isExpanded={!!expandedClubs[club.id]} toggleExpand={toggleExpand} />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
@@ -239,17 +226,17 @@ const AnimatedClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExp
         <h3 style={{ marginBottom: "10px", fontSize: "18px", flex: 1 }}>{club.name}</h3>
         <button
           style={{
-            width: "30px",
-            height: "30px",
+            width: "48px",
+            height: "48px",
             borderRadius: "50%",
             border: "none",
             backgroundColor: "#808080",
             color: "#fff",
             cursor: "pointer",
-            fontSize: "16px",
+            fontSize: "18px",
             fontWeight: "bold",
             textAlign: "center",
-            lineHeight: "30px",
+            lineHeight: "48px",
           }}
           onClick={() => window.open(club.website || "#", "_blank")}
         >
