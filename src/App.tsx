@@ -1208,7 +1208,7 @@ const App: React.FC = () => {
         © Don Barba 2025
       </div>
 
- {/* --- STATE BUTTONS (3-3-2, uniform size) --- */}
+ {/* --- STATE BUTTONS (3-3-2, CSS controlled) --- */}
 <div className="state-buttons-container">
 
   {/* Row 1: WA, SA, NSW */}
@@ -1263,7 +1263,6 @@ const App: React.FC = () => {
       );
     })}
   </div>
-
 </div>
 
 
