@@ -795,22 +795,8 @@ const rawClubs: Club[] = [
     website: "",
     logo: "https://via.placeholder.com/160?text=Allemander",
   },
-  {
-    id: "NSW-002",
-    name: "Kerr-Ly-Qs",
-    city: "Curtin (Canberra region)",
-    state: "NSW/ACT",
-    location: "St James Church Hall, Curtin",
-    night: "Tuesday",
-    caller_cuer: "",
-    time: "7:30pm",
-    level: "Beginner / Mainstream",
-    telephone: "02 6281 2007",
-    email: "info@kerrlyqs.com.au",
-    facebook: "https://www.facebook.com/KerrLyQs",
-    website: "http://www.kerrlyqs.com.au",
-    logo: "https://via.placeholder.com/160?text=KerrLyQs",
-  },
+ 
+  
   {
     id: "NSW-003",
     name: "Central Coast Ocean Waves",
@@ -1222,29 +1208,18 @@ const App: React.FC = () => {
         © Don Barba 2025
       </div>
 
-     {/* --- STATE BUTTONS (3-3-2, uniform size) --- */}
-<div className="state-buttons" style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-  
+ {/* --- STATE BUTTONS (3-3-2, uniform size) --- */}
+<div className="state-buttons-container">
   {/* Row 1: WA, SA, NSW */}
-  <div style={{ display: "flex", gap: 8 }}>
+  <div className="state-buttons-row">
     {["WA", "SA", "NSW"].map((st) => {
       const isActive = selectedState === st;
       return (
         <button
           key={st}
           onClick={() => setSelectedState(selectedState === st ? null : st)}
-          style={{
-            width: 100,
-            height: 36,
-            fontSize: 14,
-            fontWeight: 600,
-            borderRadius: 6,
-            border: "2px solid #000",
-            backgroundColor: stateColors[st],
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
-          }}
+          className={`state-btn ${isActive ? "active" : ""}`}
+          style={{ backgroundColor: stateColors[st] }}
         >
           {st}
         </button>
@@ -1253,25 +1228,15 @@ const App: React.FC = () => {
   </div>
 
   {/* Row 2: TAS, ACT, VIC */}
-  <div style={{ display: "flex", gap: 8 }}>
+  <div className="state-buttons-row">
     {["TAS", "ACT", "VIC"].map((st) => {
       const isActive = selectedState === st;
       return (
         <button
           key={st}
           onClick={() => setSelectedState(selectedState === st ? null : st)}
-          style={{
-            width: 80,
-            height: 36,
-            fontSize: 14,
-            fontWeight: 600,
-            borderRadius: 6,
-            border: "2px solid #000",
-            backgroundColor: stateColors[st],
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
-          }}
+          className={`state-btn ${isActive ? "active" : ""}`}
+          style={{ backgroundColor: stateColors[st] }}
         >
           {st}
         </button>
@@ -1280,7 +1245,7 @@ const App: React.FC = () => {
   </div>
 
   {/* Row 3: QLD, All */}
-  <div style={{ display: "flex", gap: 8 }}>
+  <div className="state-buttons-row">
     {["QLD", "All"].map((st) => {
       const isAll = st === "All";
       const isActive = isAll ? selectedState === null : selectedState === st;
@@ -1289,25 +1254,14 @@ const App: React.FC = () => {
         <button
           key={st}
           onClick={() => setSelectedState(isAll ? null : selectedState === st ? null : st)}
-          style={{
-            width: 100,
-            height: 36,
-            fontSize: 14,
-            fontWeight: 600,
-            borderRadius: 6,
-            border: "2px solid #000",
-            backgroundColor: bgColor,
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.25)" : "0 1px 3px rgba(0,0,0,0.12)",
-          }}
+          className={`state-btn ${isActive ? "active" : ""}`}
+          style={{ backgroundColor: bgColor }}
         >
           {st}
         </button>
       );
     })}
   </div>
-
 </div>
 
       {/* --- SEARCH INPUT --- */}
