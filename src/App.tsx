@@ -1213,7 +1213,7 @@ const App: React.FC = () => {
 
   /** Fixed button style for all clubs */
   const detailsButtonStyle: React.CSSProperties = {
-    width: 120,
+    width: 90,
     height: 36,
     fontSize: 13,
     fontWeight: 600,
