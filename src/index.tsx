@@ -4,58 +4,54 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-const PasswordGate: React.FC<{ password: string; children: React.ReactNode }> = ({
-  password,
-  children,
-}) => {
+// Simple Password Gate
+const PasswordGate: React.FC<{ password: string }> = ({ password }) => {
   const [unlocked, setUnlocked] = useState(false);
   const [input, setInput] = useState("");
 
-  // Check if previously unlocked
+  // If previously unlocked, skip login
   useEffect(() => {
-    const saved = localStorage.getItem("site_unlocked");
-    if (saved === "1") setUnlocked(true);
+    if (localStorage.getItem("unlocked") === "true") {
+      setUnlocked(true);
+    }
   }, []);
 
-  const tryUnlock = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input === password) {
-      localStorage.setItem("site_unlocked", "1");
+      localStorage.setItem("unlocked", "true");
       setUnlocked(true);
     } else {
-      alert("Incorrect password. Try again!");
+      alert("❌ Incorrect password. Try again!");
       setInput("");
     }
   };
 
-  if (unlocked) {
-    return <>{children}</>;
-  }
+  if (unlocked) return <App />;
 
-  // Password screen
   return (
     <div
       style={{
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
-        background: "#f0f0f0",
+        alignItems: "center",
+        backgroundColor: "#e9ecef",
         fontFamily: "Arial, sans-serif",
       }}
     >
       <form
-        onSubmit={tryUnlock}
+        onSubmit={handleSubmit}
         style={{
-          width: 320,
           background: "white",
-          padding: 24,
-          borderRadius: 10,
-          boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+          padding: "30px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
           textAlign: "center",
+          width: "320px",
         }}
       >
-        <h2 style={{ marginTop: 0 }}>🔒 Enter Password</h2>
+        <h2 style={{ marginBottom: "20px" }}>🔒 Enter Password</h2>
         <input
           type="password"
           value={input}
@@ -63,46 +59,43 @@ const PasswordGate: React.FC<{ password: string; children: React.ReactNode }> = 
           placeholder="Password"
           style={{
             width: "100%",
-            padding: "10px 12px",
-            margin: "12px 0",
-            borderRadius: 6,
+            padding: "10px",
+            fontSize: "16px",
+            borderRadius: "6px",
             border: "1px solid #ccc",
-            fontSize: 16,
+            marginBottom: "15px",
           }}
         />
         <button
           type="submit"
           style={{
             width: "100%",
-            padding: "10px 12px",
-            borderRadius: 6,
-            border: "none",
-            background: "#007bff",
+            padding: "10px",
+            fontSize: "16px",
+            backgroundColor: "#007bff",
             color: "white",
-            fontSize: 16,
+            border: "none",
+            borderRadius: "6px",
             cursor: "pointer",
           }}
         >
           Unlock
         </button>
-        <p style={{ fontSize: 12, color: "#888", marginTop: 10 }}>
-          (Password protection is for privacy only — not full security.)
+        <p style={{ fontSize: "12px", color: "#888", marginTop: "10px" }}>
+          (Password protection is for privacy only.)
         </p>
       </form>
     </div>
   );
 };
 
-// Normal rendering, just wrapped in password gate
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 root.render(
   <React.StrictMode>
-    <PasswordGate password="Aussie#1">
-      <App />
-    </PasswordGate>
+    <PasswordGate password="Aussie#1" />
   </React.StrictMode>
 );
 
