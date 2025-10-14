@@ -1105,7 +1105,7 @@ const clubs: Club[] = [
     email: "therebelcaller@gmail.com",
     facebook: "https://www.facebook.com/profile.php?id=100075858114899",
     website: "",
-    borderColor: "#A10035",
+    borderColor: "#006A4E",
     logo: "",
   },
   {
@@ -1122,7 +1122,7 @@ const clubs: Club[] = [
     email: "",
     facebook: "https://www.facebook.com/groups/2786937058237339",
     website: "",
-    borderColor: "#A10035",
+    borderColor: "#006A4E",
     logo: "",
   },
    {
@@ -1139,7 +1139,7 @@ const clubs: Club[] = [
     email: "trent.short@y7mail.com",
     facebook: "https://www.facebook.com/profile.php?id=100089945720545",
     website: "",
-    borderColor: "#A10035",
+    borderColor: "#006A4E",
     logo: "",
   },
   {
@@ -1587,7 +1587,7 @@ const stateButtonBorders: { [key: string]: string } = {
   NSW: "#FF0000",
   QLD: "#00008B",
   ACT: "#012B88",
-  TAS: "#006A4E",
+  TAS: "#C21E56",
   ALL: "#000000",
 };
 
