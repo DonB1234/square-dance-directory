@@ -554,7 +554,7 @@ const clubs: Club[] = [
     state: "SA",
     location: "Kilburn Community Hall, Le Hunte St, Kilburn",
     night: "Wednesday",
-    caller_cuer: "",
+    caller_cuer: "Graham Elliott",
     time: "8:00pm",
     level: "Plus",
     telephone: "0403 929 044",
