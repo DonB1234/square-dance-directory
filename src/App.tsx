@@ -1568,17 +1568,20 @@ const App: React.FC = () => {
     setExpandedClubs((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const filteredClubs = clubs.filter((club) => {
-    const matchesSearch =
-      club.name.toLowerCase().includes(search.toLowerCase()) ||
-      club.city.toLowerCase().includes(search.toLowerCase()) ||
-      club.state.toLowerCase().includes(search.toLowerCase()) ||
-      club.night.toLowerCase().includes(search.toLowerCase()) ||
-      (club.caller_cuer && club.caller_cuer.toLowerCase().includes(search.toLowerCase())) ||
-      club.time.toLowerCase().includes(search.toLowerCase());
-    const matchesState = selectedState === "ALL" || club.state === selectedState;
-    return matchesSearch && matchesState;
-  });
+const filteredClubs = clubs.filter((club) => {
+  const matchesSearch =
+    club.name.toLowerCase().includes(search.toLowerCase()) ||
+    club.city.toLowerCase().includes(search.toLowerCase()) ||
+    club.state.toLowerCase().includes(search.toLowerCase()) ||
+    club.night.toLowerCase().includes(search.toLowerCase()) ||
+    (club.caller_cuer && club.caller_cuer.toLowerCase().includes(search.toLowerCase())) ||
+    club.time.toLowerCase().includes(search.toLowerCase()) ||
+    club.level.toLowerCase().includes(search.toLowerCase()); // ✅ fixed
+  
+  const matchesState = selectedState === "ALL" || club.state === selectedState;
+  
+  return matchesSearch && matchesState;
+});
 
   const clubsByState: { [state: string]: Club[] } = {};
   filteredClubs.forEach((club) => {
