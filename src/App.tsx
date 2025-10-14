@@ -930,7 +930,7 @@ const clubs: Club[] = [
     night: "Wednesday",
     caller_cuer: "Howard Cockburn",
     time: "",
-    level: "",
+    level: "Mainstream and Plus",
     telephone: "0417 025 828",
     email: "howard.cockburn@gmail.com",
     facebook: "https://www.facebook.com/groups/103790413107844",
@@ -1606,7 +1606,7 @@ const App: React.FC = () => {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Australian Square Dance Clubs</h1>
-      <p>© Don Barba 2025</p>
+      <p style={{ marginTop: "-10px" }}>© Don Barba 2025</p>
 
       {/* State Buttons */}
       <div
@@ -1621,22 +1621,26 @@ const App: React.FC = () => {
         }}
       >
         {stateButtons.map((state) => {
-          let colSpan = state === "ALL" ? 2 : 1; // last row has 2 columns
+          const colSpan = state === "ALL" ? 2 : 1; // last row has 2 columns
+          const isActive = selectedState === state;
+          const color = stateButtonColors[state];
+
           return (
             <button
               key={state}
               style={{
                 gridColumn: `span ${colSpan}`,
-                backgroundColor: stateButtonColors[state],
+                backgroundColor: color,
                 border: `2px solid ${stateButtonBorders[state]}`,
                 color: "#fff",
                 padding: "10px",
                 cursor: "pointer",
-                borderRadius: "5px",
+                borderRadius: "8px",
                 fontWeight: "bold",
                 textAlign: "center",
-                transition: "all 0.3s",
-                boxShadow: selectedState === state ? "0 0 8px 2px #fff" : "none",
+                transition: "all 0.3s ease",
+                boxShadow: isActive ? `0 0 20px 5px ${color}` : "none", // 🌟 GLOW EFFECT
+                transform: isActive ? "scale(1.05)" : "scale(1)",
               }}
               onClick={() => setSelectedState(state)}
             >
@@ -1667,7 +1671,15 @@ const App: React.FC = () => {
       <div>
         {Object.keys(clubsByState).map((state) => (
           <div key={state} style={{ marginBottom: "40px" }}>
-            <h2 style={{ borderBottom: "2px solid #ccc", paddingBottom: "5px", textAlign: "center" }}>{state}</h2>
+            <h2
+              style={{
+                borderBottom: "2px solid #ccc",
+                paddingBottom: "5px",
+                textAlign: "center",
+              }}
+            >
+              {state}
+            </h2>
             <div
               style={{
                 display: "flex",
@@ -1678,7 +1690,12 @@ const App: React.FC = () => {
               }}
             >
               {clubsByState[state].map((club) => (
-                <ClubCard key={club.id} club={club} isExpanded={!!expandedClubs[club.id]} toggleExpand={toggleExpand} />
+                <ClubCard
+                  key={club.id}
+                  club={club}
+                  isExpanded={!!expandedClubs[club.id]}
+                  toggleExpand={toggleExpand}
+                />
               ))}
             </div>
           </div>
@@ -1777,9 +1794,22 @@ const ClubCard: React.FC<ClubCardProps> = ({ club, isExpanded, toggleExpand }) =
         <p><strong>Time:</strong> {club.time}</p>
         <p><strong>Level:</strong> {club.level}</p>
         <p><strong>Telephone:</strong> {club.telephone}</p>
-        <p><strong>Email:</strong> <a href={`mailto:${club.email}`}>{club.email}</a></p>
-        <p><strong>Facebook:</strong> <a href={club.facebook} target="_blank" rel="noopener noreferrer">{club.facebook}</a></p>
-        <p><strong>Website:</strong> <a href={club.website} target="_blank" rel="noopener noreferrer">{club.website}</a></p>
+        <p>
+          <strong>Email:</strong>{" "}
+          <a href={`mailto:${club.email}`}>{club.email}</a>
+        </p>
+        <p>
+          <strong>Facebook:</strong>{" "}
+          <a href={club.facebook} target="_blank" rel="noopener noreferrer">
+            {club.facebook}
+          </a>
+        </p>
+        <p>
+          <strong>Website:</strong>{" "}
+          <a href={club.website} target="_blank" rel="noopener noreferrer">
+            {club.website}
+          </a>
+        </p>
       </div>
     </div>
   );
