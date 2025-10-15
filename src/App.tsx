@@ -546,7 +546,7 @@ const clubs: Club[] = [
     website: "https://www.adelaideoutlaws.com/",
     borderColor: "#ED174C",
     logo: "",
-  },S
+  },
    {
     id: "SA-002",
     name: "Adelaide Outlaws Plus",
