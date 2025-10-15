@@ -962,7 +962,7 @@ const clubs: Club[] = [
     state: "VIC",
     location: "Maribynong Community Centre, 9 Randell St, Maribynong",
     night: "Thursday",
-    caller_cuer: "Darren Taylor",
+    caller_cuer: "David Brown",
     time: "7:30-10:30pm",
     level: "Mainstream & Plus",
     telephone: "0400 019 866",
